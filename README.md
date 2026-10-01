@@ -80,3 +80,4 @@ can query/export it directly via `psql` or any Postgres client).
   password, not per-user accounts with hashed credentials — treat it as a staff-only gate,
   not bank-grade auth.
 - Rotate `ADMIN_SECRET` to instantly invalidate all existing admin sessions.
+- 
