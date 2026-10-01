@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --olive: #4D694E;
+  --olive-deep: #344A38;
+  --olive-dark: #26382A;
+  --cream: #FFF3D5;
+  --cream-soft: #FFF8E8;
+  --off-white: #FAF7EF;
+  --taupe: #B7AE99;
+  --charcoal: #191B18;
+}
+
+body {
+  background: var(--off-white);
+  color: var(--charcoal);
+}
+
+.frame {
+  overflow: hidden;
+  background: var(--olive-deep);
+}
+.frame .bg {
+  position: absolute;
+  inset: -4%;
+  background:
+    radial-gradient(120% 90% at 20% 10%, rgba(255,243,213,.16), transparent 55%),
+    radial-gradient(100% 80% at 85% 90%, rgba(38,56,42,.55), transparent 60%),
+    linear-gradient(160deg, var(--olive) 0%, var(--olive-deep) 55%, var(--olive-dark) 100%);
+  transition: transform 1.2s cubic-bezier(.16,1,.3,1);
+}
+.frame:hover .bg { transform: scale(1.05); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; letter-spacing: .1em; padding: 16px 30px;
+  border: 1px solid var(--olive); color: var(--olive);
+  transition: background .4s ease, color .4s ease;
+}
+.btn:hover { background: var(--olive); color: var(--cream); }
+.btn-inverse { border-color: var(--cream); color: var(--cream); }
+.btn-inverse:hover { background: var(--cream); color: var(--olive-dark); }
+
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity: 1; transform: translateY(0); }
