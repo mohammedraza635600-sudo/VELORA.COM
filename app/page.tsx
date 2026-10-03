@@ -27,10 +27,10 @@ export default async function Home() {
         )}
         <div className="absolute inset-0 bg-black/25" />
         <div className="relative z-10 px-5 md:px-12 pb-24 text-cream max-w-3xl">
-          <div className="text-[11px] tracking-widest opacity-0 mb-4 animate-[heroFade_.9s_cubic-bezier(.16,1,.3,1)_.1s_forwards]">{hero.eyebrow}</div>
-          <h1 className="font-serif text-6xl md:text-8xl leading-[.98] opacity-0 translate-y-6 animate-[heroRise_1s_cubic-bezier(.16,1,.3,1)_.25s_forwards]">{hero.title}</h1>
-          <p className="mt-6 max-w-md text-sm opacity-0 leading-relaxed animate-[heroFade_.9s_cubic-bezier(.16,1,.3,1)_.55s_forwards]">{hero.subtitle}</p>
-          <div className="flex gap-4 mt-9 flex-wrap opacity-0 animate-[heroFade_.9s_cubic-bezier(.16,1,.3,1)_.75s_forwards]">
+          <div className="hero-eyebrow text-[11px] tracking-widest mb-4">{hero.eyebrow}</div>
+          <h1 className="hero-title font-serif text-6xl md:text-8xl leading-[.98]">{hero.title}</h1>
+          <p className="hero-sub mt-6 max-w-md text-sm leading-relaxed">{hero.subtitle}</p>
+          <div className="hero-cta flex gap-4 mt-9 flex-wrap">
             <Link href={hero.ctaUrl} className="btn btn-inverse transition-transform active:scale-95">{hero.ctaText} →</Link>
             <Link href="/#story" className="btn btn-inverse transition-transform active:scale-95" style={{ borderColor: "rgba(255,243,213,.5)" }}>EXPLORE THE STORY →</Link>
           </div>
