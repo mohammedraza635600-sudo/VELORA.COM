@@ -42,6 +42,7 @@ export const DEFAULT_HERO = {
   subtitle: "Tailoring for the modern man, cut from the finest natural fibres and shaped for permanence.",
   ctaText: "SHOP THE COLLECTION",
   ctaUrl: "/shop",
+  videoUrl: "",
 };
 
 export const DEFAULT_NAV = {

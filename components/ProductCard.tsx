@@ -5,7 +5,7 @@ type P = { slug: string; name: string; category: string; price: number; stock: n
 export default function ProductCard({ p }: { p: P }) {
   const colorList = (p.colors || "").split(",").map((c) => c.trim()).filter(Boolean);
   return (
-    <Link href={`/product/${p.slug}`} className="group block">
+    <Link href={`/product/${p.slug}`} className="group block transition-transform duration-150 active:scale-[.97]">
       <div className="frame aspect-[3/4] relative">
         <div className="bg" />
         {p.stock === 0 && (

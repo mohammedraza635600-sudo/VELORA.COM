@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartContext";
 import RevealScript from "@/components/RevealScript";
+import Preloader from "@/components/Preloader";
+import GlobalMotion from "@/components/GlobalMotion";
 import { getSetting, DEFAULT_BRANDING, DEFAULT_NAV, DEFAULT_FOOTER, DEFAULT_ANNOUNCEMENT } from "@/lib/settings";
 
 const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["300", "400", "500"], variable: "--font-serif" });
@@ -35,6 +37,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable}`}>
       <body style={cssVars} className="font-sans font-light">
+        <Preloader />
+        <GlobalMotion />
         <CartProvider>
           {announcement.enabled && (
             <div style={{ background: announcement.bg, color: announcement.color }} className="text-center text-[11px] tracking-wide py-2.5 relative z-[60]">

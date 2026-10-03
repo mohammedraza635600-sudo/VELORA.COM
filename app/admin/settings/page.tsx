@@ -49,6 +49,8 @@ export default async function SettingsAdmin({ searchParams }: { searchParams: Pr
             <div><label className="block text-[11px] text-gray-500 mb-1.5">CTA Text</label><input name="ctaText" defaultValue={hero.ctaText} className="w-full border rounded-md p-2.5 text-sm" /></div>
             <div><label className="block text-[11px] text-gray-500 mb-1.5">CTA URL</label><input name="ctaUrl" defaultValue={hero.ctaUrl} className="w-full border rounded-md p-2.5 text-sm" /></div>
           </div>
+          <label className="block text-[11px] text-gray-500 mb-1.5">Background Video URL (.mp4) — leave empty to use the plain background</label>
+          <input name="videoUrl" defaultValue={(hero as any).videoUrl || ""} placeholder="https://vvbczidjnwjpqvqskhar.supabase.co/storage/v1/object/public/velora-media/hero.mp4" className="w-full border rounded-md p-2.5 text-sm mb-3" />
           <button className="bg-[#4D694E] text-white text-sm px-4 py-2.5 rounded-md">Save Hero</button>
         </form>
       )}

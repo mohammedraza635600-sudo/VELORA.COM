@@ -22,6 +22,7 @@ export async function saveHero(formData: FormData) {
     subtitle: String(formData.get("subtitle") || ""),
     ctaText: String(formData.get("ctaText") || ""),
     ctaUrl: String(formData.get("ctaUrl") || ""),
+    videoUrl: String(formData.get("videoUrl") || ""),
   };
   await setSetting("hero", data);
   await logAudit("WEBSITE_SETTINGS_CHANGED", "hero", session?.name || "admin");

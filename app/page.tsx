@@ -12,15 +12,27 @@ export default async function Home() {
 
   return (
     <>
-      <section className="relative h-screen min-h-[640px] flex items-end">
-        <div className="frame absolute inset-0"><div className="bg" /></div>
+      <section className="relative h-screen min-h-[640px] flex items-end overflow-hidden">
+        {hero.videoUrl ? (
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            src={hero.videoUrl}
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        ) : (
+          <div className="frame absolute inset-0"><div className="bg" /></div>
+        )}
+        <div className="absolute inset-0 bg-black/25" />
         <div className="relative z-10 px-5 md:px-12 pb-24 text-cream max-w-3xl">
-          <div className="text-[11px] tracking-widest opacity-80 mb-4">{hero.eyebrow}</div>
-          <h1 className="font-serif text-6xl md:text-8xl leading-[.98]">{hero.title}</h1>
-          <p className="mt-6 max-w-md text-sm opacity-85 leading-relaxed">{hero.subtitle}</p>
-          <div className="flex gap-4 mt-9 flex-wrap">
-            <Link href={hero.ctaUrl} className="btn btn-inverse">{hero.ctaText} →</Link>
-            <Link href="/#story" className="btn btn-inverse" style={{ borderColor: "rgba(255,243,213,.5)" }}>EXPLORE THE STORY →</Link>
+          <div className="text-[11px] tracking-widest opacity-0 mb-4 animate-[heroFade_.9s_cubic-bezier(.16,1,.3,1)_.1s_forwards]">{hero.eyebrow}</div>
+          <h1 className="font-serif text-6xl md:text-8xl leading-[.98] opacity-0 translate-y-6 animate-[heroRise_1s_cubic-bezier(.16,1,.3,1)_.25s_forwards]">{hero.title}</h1>
+          <p className="mt-6 max-w-md text-sm opacity-0 leading-relaxed animate-[heroFade_.9s_cubic-bezier(.16,1,.3,1)_.55s_forwards]">{hero.subtitle}</p>
+          <div className="flex gap-4 mt-9 flex-wrap opacity-0 animate-[heroFade_.9s_cubic-bezier(.16,1,.3,1)_.75s_forwards]">
+            <Link href={hero.ctaUrl} className="btn btn-inverse transition-transform active:scale-95">{hero.ctaText} →</Link>
+            <Link href="/#story" className="btn btn-inverse transition-transform active:scale-95" style={{ borderColor: "rgba(255,243,213,.5)" }}>EXPLORE THE STORY →</Link>
           </div>
         </div>
       </section>
@@ -43,11 +55,11 @@ export default async function Home() {
         </div>
         <div className="grid md:grid-cols-4">
           {collections.map((c, i) => (
-            <div key={c.id} className="relative aspect-[3/4.4] group">
+            <div key={c.id} className="relative aspect-[3/4.4] group transition-transform duration-150 active:scale-[.98]">
               <div className="frame absolute inset-0" style={{ background: c.cover || undefined }}><div className="bg" /></div>
               <div className="relative z-10 h-full flex flex-col justify-end p-7 text-cream">
                 <div className="text-[11px] opacity-70 mb-2">{String(i + 1).padStart(2, "0")}</div>
-                <h3 className="font-serif text-3xl">{c.name}</h3>
+                <h3 className="font-serif text-3xl transition-transform duration-300 group-hover:translate-x-1">{c.name}</h3>
                 <p className="text-xs opacity-75 mt-2 max-w-[200px]">{c.description}</p>
               </div>
             </div>
