@@ -6,11 +6,13 @@ export const dynamic = "force-dynamic";
 export default async function SettingsAdmin({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const sp = await searchParams;
   const tab = sp.tab || "branding";
-  const branding = await getSetting("branding", DEFAULT_BRANDING);
-  const hero = await getSetting("hero", DEFAULT_HERO);
-  const nav = await getSetting("navigation", DEFAULT_NAV);
-  const footer = await getSetting("footer", DEFAULT_FOOTER);
-  const announcement = await getSetting("announcement", DEFAULT_ANNOUNCEMENT);
+  const [branding, hero, nav, footer, announcement] = await Promise.all([
+    getSetting("branding", DEFAULT_BRANDING),
+    getSetting("hero", DEFAULT_HERO),
+    getSetting("navigation", DEFAULT_NAV),
+    getSetting("footer", DEFAULT_FOOTER),
+    getSetting("announcement", DEFAULT_ANNOUNCEMENT),
+  ]);
 
   const tabs = ["branding", "homepage", "navigation", "footer", "announcement"];
 

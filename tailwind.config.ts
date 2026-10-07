@@ -15,8 +15,8 @@ const config: Config = {
         charcoal: "var(--charcoal)",
       },
       fontFamily: {
-        serif: ["var(--font-serif)", "serif"],
-        sans: ["var(--font-sans)", "sans-serif"],
+        serif: ["'Cormorant Garamond'", "serif"],
+        sans: ["Inter", "sans-serif"],
       },
     },
   },

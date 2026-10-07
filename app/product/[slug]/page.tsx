@@ -11,11 +11,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product) return notFound();
 
-  const related = await prisma.product.findMany({
-    where: { status: "published", id: { not: product.id } },
-    take: 4,
-  });
-  const reviews = await prisma.review.findMany({ where: { productId: product.id, approved: true }, orderBy: { createdAt: "desc" } });
+  const [related, reviews] = await Promise.all([
+    prisma.product.findMany({ where: { status: "published", id: { not: product.id } }, take: 4 }),
+    prisma.review.findMany({ where: { productId: product.id, approved: true }, orderBy: { createdAt: "desc" } }),
+  ]);
   const colors = (product.colors || "").split(",").map((c) => c.trim()).filter(Boolean);
 
   return (

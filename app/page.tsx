@@ -2,13 +2,16 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSetting, DEFAULT_HERO } from "@/lib/settings";
 import ProductCard from "@/components/ProductCard";
+import HeroParallax from "@/components/HeroParallax";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const hero = await getSetting("hero", DEFAULT_HERO);
-  const products = await prisma.product.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" }, take: 8 });
-  const collections = await prisma.collection.findMany({ where: { status: "active" }, orderBy: { order: "asc" }, take: 4 });
+  const [hero, products, collections] = await Promise.all([
+    getSetting("hero", DEFAULT_HERO),
+    prisma.product.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" }, take: 8 }),
+    prisma.collection.findMany({ where: { status: "active" }, orderBy: { order: "asc" }, take: 4 }),
+  ]);
 
   return (
     <>
@@ -26,15 +29,17 @@ export default async function Home() {
           <div className="frame absolute inset-0"><div className="bg" /></div>
         )}
         <div className="absolute inset-0 bg-black/25" />
-        <div className="relative z-10 px-5 md:px-12 pb-24 text-cream max-w-3xl">
-          <div className="hero-eyebrow text-[11px] tracking-widest mb-4">{hero.eyebrow}</div>
-          <h1 className="hero-title font-serif text-6xl md:text-8xl leading-[.98]">{hero.title}</h1>
-          <p className="hero-sub mt-6 max-w-md text-sm leading-relaxed">{hero.subtitle}</p>
-          <div className="hero-cta flex gap-4 mt-9 flex-wrap">
-            <Link href={hero.ctaUrl} className="btn btn-inverse transition-transform active:scale-95">{hero.ctaText} →</Link>
-            <Link href="/#story" className="btn btn-inverse transition-transform active:scale-95" style={{ borderColor: "rgba(255,243,213,.5)" }}>EXPLORE THE STORY →</Link>
+        <HeroParallax>
+          <div className="relative z-10 px-5 md:px-12 pb-24 text-cream max-w-3xl">
+            <div className="hero-eyebrow text-[11px] tracking-widest mb-4">{hero.eyebrow}</div>
+            <h1 className="hero-title font-serif text-6xl md:text-8xl leading-[.98]">{hero.title}</h1>
+            <p className="hero-sub mt-6 max-w-md text-sm leading-relaxed">{hero.subtitle}</p>
+            <div className="hero-cta flex gap-4 mt-9 flex-wrap">
+              <Link href={hero.ctaUrl} className="btn btn-inverse transition-transform active:scale-95">{hero.ctaText} →</Link>
+              <Link href="/#story" className="btn btn-inverse transition-transform active:scale-95" style={{ borderColor: "rgba(255,243,213,.5)" }}>EXPLORE THE STORY →</Link>
+            </div>
           </div>
-        </div>
+        </HeroParallax>
       </section>
 
       <section className="bg-creamSoft py-32 reveal">
@@ -53,9 +58,9 @@ export default async function Home() {
           <div className="text-[11px] tracking-widest text-olive mb-2">CURATED FOR THE MODERN MAN</div>
           <h2 className="font-serif text-4xl md:text-5xl">The Collection</h2>
         </div>
-        <div className="grid md:grid-cols-4">
+        <div className="grid md:grid-cols-4" data-reveal-group>
           {collections.map((c, i) => (
-            <div key={c.id} className="relative aspect-[3/4.4] group transition-transform duration-150 active:scale-[.98]">
+            <div key={c.id} className="reveal relative aspect-[3/4.4] group transition-transform duration-150 active:scale-[.98]">
               <div className="frame absolute inset-0" style={{ background: c.cover || undefined }}><div className="bg" /></div>
               <div className="relative z-10 h-full flex flex-col justify-end p-7 text-cream">
                 <div className="text-[11px] opacity-70 mb-2">{String(i + 1).padStart(2, "0")}</div>
@@ -72,9 +77,11 @@ export default async function Home() {
           <div className="text-[11px] tracking-widest text-olive mb-2">JUST LANDED</div>
           <h2 className="font-serif text-4xl md:text-5xl">New Arrivals</h2>
         </div>
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-4 gap-8" data-reveal-group>
           {products.map((p) => (
-            <ProductCard key={p.id} p={p} />
+            <div key={p.id} className="reveal">
+              <ProductCard p={p} />
+            </div>
           ))}
         </div>
         {products.length === 0 && (
