@@ -1,10 +1,14 @@
+import MediaUploader from "./MediaUploader";
+
 type P = Partial<{
   name: string; category: string; collection: string; price: number; compareAt: number | null;
   sku: string; stock: number; status: string; colors: string; description: string; material: string; care: string;
+  images: string; video: string;
 }>;
 
 export default function ProductForm({ action, product }: { action: (formData: FormData) => void; product?: P }) {
   const p = product || {};
+  const initialImages = (p.images || "").split(",").map((s) => s.trim()).filter(Boolean);
   return (
     <form action={action} className="bg-white border rounded-lg p-6 max-w-2xl">
       <div className="grid grid-cols-2 gap-4">
@@ -12,6 +16,7 @@ export default function ProductForm({ action, product }: { action: (formData: Fo
           <label className="block text-[11px] text-gray-500 mb-1.5">Product Name</label>
           <input name="name" defaultValue={p.name} required className="w-full border rounded-md p-2.5 text-sm" />
         </div>
+        <MediaUploader initialImages={initialImages} initialVideo={p.video || ""} />
         <div>
           <label className="block text-[11px] text-gray-500 mb-1.5">Category</label>
           <select name="category" defaultValue={p.category} className="w-full border rounded-md p-2.5 text-sm">

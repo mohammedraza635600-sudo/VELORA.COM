@@ -16,14 +16,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     prisma.review.findMany({ where: { productId: product.id, approved: true }, orderBy: { createdAt: "desc" } }),
   ]);
   const colors = (product.colors || "").split(",").map((c) => c.trim()).filter(Boolean);
+  const images = (product.images || "").split(",").map((s) => s.trim()).filter(Boolean);
 
   return (
     <div className="max-w-[1400px] mx-auto px-5 md:px-12 py-14">
       <a href="/shop" className="text-xs tracking-widest text-olive inline-block mb-6">← BACK TO SHOP</a>
       <div className="grid md:grid-cols-[1.3fr_1fr] gap-16">
         <div className="flex flex-col gap-4">
-          <div className="frame relative aspect-[4/5]"><div className="bg" /></div>
-          <div className="frame relative aspect-[4/5]"><div className="bg" /></div>
+          {product.video && (
+            <div className="relative aspect-[4/5] rounded-sm overflow-hidden">
+              <video src={product.video} className="w-full h-full object-cover" autoPlay muted loop playsInline />
+            </div>
+          )}
+          {images.length > 0 ? (
+            images.map((url, i) => (
+              <div key={url + i} className="relative aspect-[4/5] rounded-sm overflow-hidden">
+                <img src={url} alt={`${product.name} — view ${i + 1}`} className="w-full h-full object-cover" />
+              </div>
+            ))
+          ) : !product.video ? (
+            <>
+              <div className="frame relative aspect-[4/5]"><div className="bg" /></div>
+              <div className="frame relative aspect-[4/5]"><div className="bg" /></div>
+            </>
+          ) : null}
         </div>
         <div className="md:sticky md:top-28 self-start">
           <div className="text-[11px] tracking-widest text-olive">VELORA</div>

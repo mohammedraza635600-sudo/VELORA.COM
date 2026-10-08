@@ -23,7 +23,8 @@ model Product {
   description String?
   material    String?
   care        String?
-  images      String?  // comma-separated URLs
+  images      String?  // comma-separated URLs, up to 6
+  video       String?  // single video URL
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   orderItems  OrderItem[]

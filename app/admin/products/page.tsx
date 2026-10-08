@@ -28,7 +28,16 @@ export default async function ProductsAdmin() {
             {products.map((p) => (
               <tr key={p.id} className="border-t">
                 <td className="p-3"><input type="checkbox" name="ids" value={p.id} /></td>
-                <td className="p-3">{p.name}</td>
+                <td className="p-3">
+                  <div className="flex items-center gap-2.5">
+                    {p.images ? (
+                      <img src={p.images.split(",")[0].trim()} alt="" className="w-9 h-11 rounded object-cover border" />
+                    ) : (
+                      <div className="w-9 h-11 rounded border bg-gray-100" />
+                    )}
+                    {p.name}
+                  </div>
+                </td>
                 <td className="p-3">{p.category}</td>
                 <td className="p-3">${p.price}</td>
                 <td className="p-3">
