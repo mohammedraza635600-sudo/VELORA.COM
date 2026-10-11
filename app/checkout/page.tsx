@@ -93,9 +93,7 @@ export default function CheckoutPage() {
             <input name="zip" placeholder="Postal code" className="border border-black/20 p-3 text-sm bg-transparent" />
           </div>
           <h3 className="font-serif text-2xl mt-8 mb-4">Payment</h3>
-          {[["whatsapp", "💬 Confirm Order via WhatsApp"], ["cod", "📦 Cash on Delivery"]].map(([val, label]) => (
-            <div key={val} onClick={() => setMethod(val)} className={`border p-3.5 text-sm mb-2.5 cursor-pointer transition-colors ${method === val ? "border-olive bg-creamSoft" : "border-black/20"}`}>{label}</div>
-          ))}
+          <div className="border border-olive bg-creamSoft p-3.5 text-sm mb-2.5">💬 Confirm Order via WhatsApp</div>
         </div>
         <div className="bg-creamSoft p-6 h-fit">
           <div className="text-xs tracking-widest text-taupe mb-4">ORDER SUMMARY</div>
