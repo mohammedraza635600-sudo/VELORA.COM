@@ -61,8 +61,20 @@ export async function updateProduct(id: string, formData: FormData) {
 
 export async function deleteProduct(id: string) {
   const session = await getAdminSession();
-  await prisma.product.delete({ where: { id } });
-  await logAudit("PRODUCT_DELETED", "products", session?.name || "admin", { id });
+  try {
+    await prisma.product.delete({ where: { id } });
+    await logAudit("PRODUCT_DELETED", "products", session?.name || "admin", { id });
+  } catch (err: any) {
+    if (err?.code === "P2003") {
+      // Product has existing orders attached — archive instead of hard-deleting.
+      await prisma.product.update({ where: { id }, data: { status: "archived" } }).catch(() => {});
+      await logAudit("PRODUCT_ARCHIVED_HAS_ORDERS", "products", session?.name || "admin", { id });
+    } else if (err?.code === "P2025") {
+      // Already deleted (e.g. double click) — nothing to do.
+    } else {
+      throw err;
+    }
+  }
   revalidatePath("/admin/products");
 }
 
@@ -72,7 +84,16 @@ export async function bulkUpdateProducts(formData: FormData) {
   const action = String(formData.get("bulkAction") || "");
   if (!ids.length || !action) return;
   if (action === "delete") {
-    await prisma.product.deleteMany({ where: { id: { in: ids } } });
+    try {
+      await prisma.product.deleteMany({ where: { id: { in: ids } } });
+    } catch (err: any) {
+      if (err?.code === "P2003") {
+        // Some of these products have existing orders — archive everything selected instead.
+        await prisma.product.updateMany({ where: { id: { in: ids } }, data: { status: "archived" } });
+      } else {
+        throw err;
+      }
+    }
   } else {
     await prisma.product.updateMany({ where: { id: { in: ids } }, data: { status: action } });
   }
