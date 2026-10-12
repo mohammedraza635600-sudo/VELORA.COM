@@ -10,6 +10,7 @@ export default function CheckoutPage() {
   const [method, setMethod] = useState("whatsapp");
   const [done, setDone] = useState<{ orderId: string; total: number } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const shipping = subtotal > 200 ? 0 : 15;
   const total = subtotal + shipping;
 
@@ -40,19 +41,25 @@ export default function CheckoutPage() {
     const city = String(form.get("city") || "");
     const zip = String(form.get("zip") || "");
     if (!name.trim() || !email) { alert("Please fill in your name and email."); return; }
+    setError("");
     setLoading(true);
-    const result = await placeOrder({
-      name, email, address, city, zip,
-      method,
-      items: items.map((i) => ({ productId: i.productId, name: i.name, size: i.size, price: i.price, qty: i.qty })),
-    });
-    setLoading(false);
-    setDone(result);
-    clear();
+    try {
+      const result = await placeOrder({
+        name, email, address, city, zip,
+        method,
+        items: items.map((i) => ({ productId: i.productId, name: i.name, size: i.size, price: i.price, qty: i.qty })),
+      });
+      setLoading(false);
+      setDone(result);
+      clear();
 
-    if (method === "whatsapp") {
-      const msg = buildWhatsAppMessage(result.orderId, name, address, city, zip);
-      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
+      if (method === "whatsapp") {
+        const msg = buildWhatsAppMessage(result.orderId, name, address, city, zip);
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
+      }
+    } catch (err: any) {
+      setLoading(false);
+      setError(err?.message?.replace(/^Error:\s*/, "") || "Something went wrong placing your order. Please try again.");
     }
   }
 
@@ -102,6 +109,7 @@ export default function CheckoutPage() {
           ))}
           <div className="flex justify-between text-sm py-2"><span>Shipping</span><span>{shipping === 0 ? "Free" : `₹${shipping}`}</span></div>
           <div className="flex justify-between text-base font-medium border-t border-black/15 mt-2 pt-3.5"><span>Total</span><span>₹{total}</span></div>
+          {error && <p className="text-[12px] text-red-600 mb-3">{error}</p>}
           <button type="submit" disabled={loading} className="btn w-full justify-center mt-5" style={{ background: "var(--olive)", color: "var(--cream)" }}>
             {loading ? "PLACING ORDER…" : method === "whatsapp" ? "PLACE ORDER & OPEN WHATSAPP" : "PLACE ORDER"}
           </button>

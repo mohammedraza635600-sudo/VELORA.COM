@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { updateOrderStatus, updateTracking, deleteOrder } from "./actions";
+import { updateOrderStatus, updateTracking, deleteOrder, updatePayment } from "./actions";
 
 export const dynamic = "force-dynamic";
 const STATUSES = ["pending","processing","packed","shipped","delivered","cancelled","refunded","returned"];
@@ -19,7 +19,17 @@ export default async function OrdersAdmin() {
                 <td className="p-3">{o.name}<br /><span className="text-gray-400 text-[11px]">{o.email}</span></td>
                 <td className="p-3">{o.items.reduce((s, i) => s + i.qty, 0)}</td>
                 <td className="p-3">₹{o.total}</td>
-                <td className="p-3"><span className={`px-2 py-0.5 rounded-full text-[10.5px] ${o.payment === "Paid" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"}`}>{o.payment}</span></td>
+                <td className="p-3">
+                  <form action={updatePayment.bind(null, o.id)} className="flex flex-col gap-1">
+                    <select name="payment" defaultValue={o.payment} className={`border rounded p-1 text-[11px] ${o.payment === "Paid" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"}`}>
+                      <option value="Pending">Pending</option>
+                      <option value="Paid">Paid</option>
+                      <option value="Failed">Failed</option>
+                      <option value="Refunded">Refunded</option>
+                    </select>
+                    <button className="border rounded text-[10.5px] px-1.5 py-0.5">Save</button>
+                  </form>
+                </td>
                 <td className="p-3">
                   <form action={updateOrderStatus.bind(null, o.id)} className="flex gap-1.5 items-center">
                     <select name="status" defaultValue={o.status} className="border rounded p-1 text-[11.5px]">

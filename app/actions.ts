@@ -19,36 +19,50 @@ export async function placeOrder(payload: {
   const shipping = subtotal > 200 ? 0 : 15;
   const total = subtotal + shipping;
 
-  const order = await prisma.order.create({
-    data: {
-      name: payload.name,
-      email: payload.email,
-      address: payload.address,
-      city: payload.city,
-      zip: payload.zip,
-      method: payload.method,
-      payment: payload.method === "cod" ? "Pending" : "Paid",
-      subtotal,
-      shipping,
-      total,
-      items: {
-        create: payload.items.map((i) => ({
-          productId: i.productId,
-          name: i.name,
-          size: i.size,
-          price: i.price,
-          qty: i.qty,
-        })),
+  const result = await prisma.$transaction(async (tx) => {
+    // Lock-step stock check — prevents overselling if two customers order the last item at once.
+    for (const item of payload.items) {
+      const product = await tx.product.findUnique({ where: { id: item.productId }, select: { stock: true, name: true } });
+      if (!product || product.stock < item.qty) {
+        throw new Error(`Sorry, "${item.name}" only has ${product?.stock ?? 0} left in stock.`);
+      }
+    }
+
+    const order = await tx.order.create({
+      data: {
+        name: payload.name,
+        email: payload.email,
+        address: payload.address,
+        city: payload.city,
+        zip: payload.zip,
+        method: payload.method,
+        // No real payment gateway is connected yet — never mark an order "Paid"
+        // just because the browser reached this page. Admin confirms payment manually.
+        payment: "Pending",
+        subtotal,
+        shipping,
+        total,
+        items: {
+          create: payload.items.map((i) => ({
+            productId: i.productId,
+            name: i.name,
+            size: i.size,
+            price: i.price,
+            qty: i.qty,
+          })),
+        },
       },
-    },
+    });
+
+    for (const item of payload.items) {
+      await tx.product.update({
+        where: { id: item.productId },
+        data: { stock: { decrement: item.qty } },
+      });
+    }
+
+    return order;
   });
 
-  for (const item of payload.items) {
-    await prisma.product.update({
-      where: { id: item.productId },
-      data: { stock: { decrement: item.qty } },
-    }).catch(() => {});
-  }
-
-  return { orderId: order.id, total };
+  return { orderId: result.id, total };
 }

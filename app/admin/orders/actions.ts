@@ -21,6 +21,14 @@ export async function updateTracking(id: string, formData: FormData) {
   revalidatePath("/admin/orders");
 }
 
+export async function updatePayment(id: string, formData: FormData) {
+  const session = await getAdminSession();
+  const payment = String(formData.get("payment") || "Pending");
+  await prisma.order.update({ where: { id }, data: { payment } });
+  await logAudit("ORDER_PAYMENT_CHANGED", "orders", session?.name || "admin", { id, payment });
+  revalidatePath("/admin/orders");
+}
+
 export async function deleteOrder(id: string) {
   const session = await getAdminSession();
   await prisma.orderItem.deleteMany({ where: { orderId: id } });
