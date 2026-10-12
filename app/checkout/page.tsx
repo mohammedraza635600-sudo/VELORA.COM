@@ -21,10 +21,10 @@ export default function CheckoutPage() {
       `*Delivery Address:* ${address}${city ? ", " + city : ""}${zip ? " - " + zip : ""}`,
       ``,
       `*Items:*`,
-      ...items.map((it) => `• ${it.name} (Size ${it.size}) × ${it.qty} — $${it.price * it.qty}`),
+      ...items.map((it) => `• ${it.name} (Size ${it.size}) × ${it.qty} — ₹${it.price * it.qty}`),
       ``,
-      `Shipping: ${shipping === 0 ? "Free" : "$" + shipping}`,
-      `*Total: $${total}*`,
+      `Shipping: ${shipping === 0 ? "Free" : "₹" + shipping}`,
+      `*Total: ₹${total}*`,
       ``,
       `Please confirm this order and share payment details. Thank you!`,
     ];
@@ -65,7 +65,7 @@ export default function CheckoutPage() {
       <div className="max-w-xl mx-auto px-5 py-24 text-center">
         <div className="text-4xl text-olive">✓</div>
         <h2 className="font-serif text-4xl mt-4 mb-2">Thank you.</h2>
-        <p className="text-sm text-taupe">Order #{done.orderId.slice(-8).toUpperCase()} placed — total ${done.total}.</p>
+        <p className="text-sm text-taupe">Order #{done.orderId.slice(-8).toUpperCase()} placed — total ₹{done.total}.</p>
         {method === "whatsapp" ? (
           <p className="text-sm text-taupe mt-2">We&rsquo;ve opened WhatsApp with your order details — please hit send to confirm with us. If it didn&rsquo;t open, <a className="underline text-olive" href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer">tap here</a>.</p>
         ) : (
@@ -98,10 +98,10 @@ export default function CheckoutPage() {
         <div className="bg-creamSoft p-6 h-fit">
           <div className="text-xs tracking-widest text-taupe mb-4">ORDER SUMMARY</div>
           {items.map((it, i) => (
-            <div key={i} className="flex justify-between text-sm py-2"><span>{it.name} × {it.qty}</span><span>${it.price * it.qty}</span></div>
+            <div key={i} className="flex justify-between text-sm py-2"><span>{it.name} × {it.qty}</span><span>₹{it.price * it.qty}</span></div>
           ))}
-          <div className="flex justify-between text-sm py-2"><span>Shipping</span><span>{shipping === 0 ? "Free" : `$${shipping}`}</span></div>
-          <div className="flex justify-between text-base font-medium border-t border-black/15 mt-2 pt-3.5"><span>Total</span><span>${total}</span></div>
+          <div className="flex justify-between text-sm py-2"><span>Shipping</span><span>{shipping === 0 ? "Free" : `₹${shipping}`}</span></div>
+          <div className="flex justify-between text-base font-medium border-t border-black/15 mt-2 pt-3.5"><span>Total</span><span>₹{total}</span></div>
           <button type="submit" disabled={loading} className="btn w-full justify-center mt-5" style={{ background: "var(--olive)", color: "var(--cream)" }}>
             {loading ? "PLACING ORDER…" : method === "whatsapp" ? "PLACE ORDER & OPEN WHATSAPP" : "PLACE ORDER"}
           </button>

@@ -25,11 +25,11 @@ export default function CartPage() {
                 </div>
                 <button onClick={() => remove(i)} className="text-[11px] text-taupe underline mt-2">Remove</button>
               </div>
-              <div className="text-sm">${it.price * it.qty}</div>
+              <div className="text-sm">₹{it.price * it.qty}</div>
             </div>
           ))}
           <div className="flex justify-between text-lg mt-8">
-            <span>Subtotal</span><span>${subtotal}</span>
+            <span>Subtotal</span><span>₹{subtotal}</span>
           </div>
           <Link href="/checkout" className="btn w-full justify-center mt-6" style={{ background: "var(--olive)", color: "var(--cream)" }}>CHECKOUT</Link>
         </>

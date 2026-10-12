@@ -30,7 +30,7 @@ export default function SearchPage() {
             <div className="frame relative w-14 h-16 flex-shrink-0"><div className="bg" /></div>
             <div>
               <div className="text-sm">{h.name}</div>
-              <div className="text-xs text-taupe mt-1">{h.category} · ${h.price}</div>
+              <div className="text-xs text-taupe mt-1">{h.category} · ₹{h.price}</div>
             </div>
           </a>
         ))}

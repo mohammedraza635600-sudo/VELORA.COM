@@ -18,7 +18,7 @@ export default async function OrdersAdmin() {
               <tr key={o.id} className="border-t align-top">
                 <td className="p-3">{o.name}<br /><span className="text-gray-400 text-[11px]">{o.email}</span></td>
                 <td className="p-3">{o.items.reduce((s, i) => s + i.qty, 0)}</td>
-                <td className="p-3">${o.total}</td>
+                <td className="p-3">₹{o.total}</td>
                 <td className="p-3"><span className={`px-2 py-0.5 rounded-full text-[10.5px] ${o.payment === "Paid" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"}`}>{o.payment}</span></td>
                 <td className="p-3">
                   <form action={updateOrderStatus.bind(null, o.id)} className="flex gap-1.5 items-center">

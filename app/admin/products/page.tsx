@@ -39,7 +39,7 @@ export default async function ProductsAdmin() {
                   </div>
                 </td>
                 <td className="p-3">{p.category}</td>
-                <td className="p-3">${p.price}</td>
+                <td className="p-3">₹{p.price}</td>
                 <td className="p-3">
                   {p.stock === 0 ? <span className="text-red-600">Out of stock</span> : p.stock < 5 ? <span className="text-amber-600">{p.stock} — Low</span> : p.stock}
                   <span className="inline-flex gap-1 ml-2">

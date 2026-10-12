@@ -11,10 +11,10 @@ export default async function AdminDashboard() {
   const paidCount = orders.filter(o => o.payment === "Paid").length;
 
   const stats = [
-    [`$${revenue.toLocaleString()}`, "Revenue (paid orders)"],
+    [`₹${revenue.toLocaleString()}`, "Revenue (paid orders)"],
     [orders.length, "Total Orders"],
     [products.length, "Total Products"],
-    [paidCount ? `$${Math.round(revenue / paidCount)}` : "$0", "Avg. Order Value"],
+    [paidCount ? `₹${Math.round(revenue / paidCount)}` : "₹0", "Avg. Order Value"],
     [lowStock, "Low Stock"],
     [outStock, "Out of Stock"],
     [pending, "Pending Orders"],
@@ -38,7 +38,7 @@ export default async function AdminDashboard() {
           <thead><tr className="bg-gray-50 text-left text-[10.5px] text-gray-500"><th className="p-3">Customer</th><th className="p-3">Total</th><th className="p-3">Status</th><th className="p-3">Date</th></tr></thead>
           <tbody>
             {orders.slice(0, 6).map((o) => (
-              <tr key={o.id} className="border-t"><td className="p-3">{o.name}</td><td className="p-3">${o.total}</td><td className="p-3">{o.status}</td><td className="p-3">{o.createdAt.toLocaleDateString()}</td></tr>
+              <tr key={o.id} className="border-t"><td className="p-3">{o.name}</td><td className="p-3">₹{o.total}</td><td className="p-3">{o.status}</td><td className="p-3">{o.createdAt.toLocaleDateString()}</td></tr>
             ))}
             {orders.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-gray-400">No orders yet.</td></tr>}
           </tbody>

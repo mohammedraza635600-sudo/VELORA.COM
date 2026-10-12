@@ -38,7 +38,7 @@ export default function ProductCard({ p }: { p: P }) {
             ))}
           </div>
         </div>
-        <div className="text-sm whitespace-nowrap">${p.price}</div>
+        <div className="text-sm whitespace-nowrap">₹{p.price}</div>
       </div>
     </Link>
   );

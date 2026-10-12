@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           <div className="text-[11px] tracking-widest text-olive">VELORA</div>
           <div className="text-[11px] tracking-widest text-taupe mt-1">{(product.collection || "").toUpperCase()} COLLECTION</div>
           <h1 className="font-serif text-4xl mt-4">{product.name}</h1>
-          <div className="text-lg mt-2">${product.price}</div>
+          <div className="text-lg mt-2">₹{product.price}</div>
           <p className="text-sm leading-relaxed mt-5 max-w-md" style={{ color: "#4a5045" }}>{product.description}</p>
 
           <AddToBag product={{ id: product.id, name: product.name, slug: product.slug, price: product.price, colors, stock: product.stock }} />

@@ -44,9 +44,9 @@ export default function MediaUploader({
   async function onImagesSelected(files: FileList | null) {
     if (!files || !files.length) return;
     setError("");
-    const room = Math.max(0, 6 - images.length);
+    const room = Math.max(0, 8 - images.length);
     const toUpload = Array.from(files).slice(0, room);
-    if (toUpload.length === 0) { setError("Maximum 6 images reached — remove one first."); return; }
+    if (toUpload.length === 0) { setError("Maximum 8 images reached — remove one first."); return; }
     setBusy(true);
     try {
       const urls: string[] = [];
@@ -80,8 +80,8 @@ export default function MediaUploader({
       <input type="hidden" name="images" value={images.join(",")} />
       <input type="hidden" name="video" value={video} />
 
-      <label className="block text-[11px] text-gray-500 mb-1.5">Product Images (up to 6)</label>
-      <div className="grid grid-cols-6 gap-2 mb-2">
+      <label className="block text-[11px] text-gray-500 mb-1.5">Product Images (4–8 recommended)</label>
+      <div className="grid grid-cols-4 gap-2 mb-2">
         {images.map((url, i) => (
           <div key={url} className="relative aspect-square rounded-md overflow-hidden border">
             <img src={url} alt="" className="w-full h-full object-cover" />
@@ -92,7 +92,7 @@ export default function MediaUploader({
             >✕</button>
           </div>
         ))}
-        {images.length < 6 && (
+        {images.length < 8 && (
           <label className="aspect-square rounded-md border border-dashed flex items-center justify-center text-[11px] text-gray-400 cursor-pointer hover:border-gray-500">
             {busy ? "…" : "+ Add"}
             <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => onImagesSelected(e.target.files)} disabled={busy} />
