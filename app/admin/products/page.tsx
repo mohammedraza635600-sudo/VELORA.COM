@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { deleteProduct, bulkUpdateProducts, adjustStock } from "./actions";
+import PendingBar from "@/components/admin/PendingBar";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ export default async function ProductsAdmin() {
       </div>
       <p className="text-xs text-gray-500 mb-5">{products.length} item(s) — live on the storefront the moment you publish.</p>
       <form action={bulkUpdateProducts} className="bg-white border rounded-lg overflow-hidden">
+        <PendingBar />
         <div className="flex gap-2 px-4 py-2.5 border-b bg-gray-50 text-[11.5px]">
           <button name="bulkAction" value="published" className="border rounded px-2.5 py-1">Bulk Publish</button>
           <button name="bulkAction" value="draft" className="border rounded px-2.5 py-1">Bulk Unpublish</button>
