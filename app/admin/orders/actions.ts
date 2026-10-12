@@ -20,3 +20,12 @@ export async function updateTracking(id: string, formData: FormData) {
   await logAudit("ORDER_TRACKING_UPDATED", "orders", session?.name || "admin", { id, carrier, tracking });
   revalidatePath("/admin/orders");
 }
+
+export async function deleteOrder(id: string) {
+  const session = await getAdminSession();
+  await prisma.orderItem.deleteMany({ where: { orderId: id } });
+  await prisma.order.delete({ where: { id } });
+  await logAudit("ORDER_DELETED", "orders", session?.name || "admin", { id });
+  revalidatePath("/admin/orders");
+  revalidatePath("/admin/products");
+}

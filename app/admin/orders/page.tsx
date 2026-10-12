@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { updateOrderStatus, updateTracking } from "./actions";
+import { updateOrderStatus, updateTracking, deleteOrder } from "./actions";
 
 export const dynamic = "force-dynamic";
 const STATUSES = ["pending","processing","packed","shipped","delivered","cancelled","refunded","returned"];
@@ -12,7 +12,7 @@ export default async function OrdersAdmin() {
       <p className="text-xs text-gray-500 mb-5">{orders.length} order(s). Status changes are logged and visible to the customer.</p>
       <div className="bg-white border rounded-lg overflow-hidden">
         <table className="w-full text-[12.5px]">
-          <thead><tr className="bg-gray-50 text-left text-[10.5px] text-gray-500"><th className="p-3">Customer</th><th className="p-3">Items</th><th className="p-3">Total</th><th className="p-3">Payment</th><th className="p-3">Status</th><th className="p-3">Tracking</th><th className="p-3">Date</th></tr></thead>
+          <thead><tr className="bg-gray-50 text-left text-[10.5px] text-gray-500"><th className="p-3">Customer</th><th className="p-3">Items</th><th className="p-3">Total</th><th className="p-3">Payment</th><th className="p-3">Status</th><th className="p-3">Tracking</th><th className="p-3">Date</th><th className="p-3">Actions</th></tr></thead>
           <tbody>
             {orders.map((o) => (
               <tr key={o.id} className="border-t align-top">
@@ -36,9 +36,14 @@ export default async function OrdersAdmin() {
                   </form>
                 </td>
                 <td className="p-3 text-[11px]">{o.createdAt.toLocaleDateString()}</td>
+                <td className="p-3">
+                  <form action={deleteOrder.bind(null, o.id)}>
+                    <button className="border rounded text-[10.5px] px-2 py-1 text-red-600">Delete</button>
+                  </form>
+                </td>
               </tr>
             ))}
-            {orders.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-400">No orders yet.</td></tr>}
+            {orders.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-gray-400">No orders yet.</td></tr>}
           </tbody>
         </table>
       </div>
