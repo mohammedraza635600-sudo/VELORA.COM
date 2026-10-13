@@ -15,7 +15,7 @@ export default async function Home() {
 
   return (
     <>
-      <section className="relative h-screen min-h-[640px] flex items-end overflow-hidden">
+      <section className="relative min-h-[100svh] min-h-[640px] flex items-end overflow-hidden">
         {hero.videoUrl ? (
           <video
             className="absolute inset-0 w-full h-full object-cover"
