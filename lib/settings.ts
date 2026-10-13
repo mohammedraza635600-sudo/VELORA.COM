@@ -63,7 +63,7 @@ export const DEFAULT_FOOTER = {
 };
 
 export const DEFAULT_ANNOUNCEMENT = {
-  text: "Complimentary shipping on all orders over $200",
+  text: "Complimentary shipping on all orders over ₹200",
   enabled: true,
   bg: "#26382A",
   color: "#FFF3D5",
