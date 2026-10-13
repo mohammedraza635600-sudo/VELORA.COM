@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { useCart } from "./CartContext";
 
 type NavItem = { label: string; url: string };
+type Announcement = { text: string; enabled: boolean; bg: string; color: string; link?: string };
 
-export default function Navbar({ items }: { items: NavItem[] }) {
+export default function Navbar({ items, announcement }: { items: NavItem[]; announcement?: Announcement }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { count } = useCart();
+  const showAnnouncement = !!announcement?.enabled && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -25,6 +27,14 @@ export default function Navbar({ items }: { items: NavItem[] }) {
   return (
     <>
       <header id="site-nav" className={`fixed top-0 left-0 right-0 z-50 border-b border-transparent ${scrolled ? "scrolled" : ""}`}>
+        {announcement?.enabled && (
+          <div
+            style={{ background: announcement.bg, color: announcement.color, maxHeight: showAnnouncement ? "40px" : "0px" }}
+            className="text-center text-[11px] tracking-wide overflow-hidden transition-[max-height] duration-300 ease-out"
+          >
+            <div className="py-2.5">{announcement.text}</div>
+          </div>
+        )}
         <div className="nav-pad flex items-center justify-between px-5 md:px-12 py-4 transition-[padding] duration-300">
           <button className="md:hidden text-xs tracking-widest active:scale-90 transition-transform" onClick={() => setOpen(true)}>MENU</button>
           <Link href="/" className="font-serif text-2xl tracking-[.28em] active:scale-95 transition-transform inline-block">VELORA</Link>

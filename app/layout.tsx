@@ -53,13 +53,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Preloader />
         <GlobalMotion />
         <CartProvider>
-          {announcement.enabled && (
-            <div style={{ background: announcement.bg, color: announcement.color }} className="text-center text-[11px] tracking-wide py-2.5 relative z-[60]">
-              {announcement.text}
-            </div>
-          )}
-          <Navbar items={nav.items} />
-          <main className="pt-[76px]">{children}</main>
+          <Navbar items={nav.items} announcement={announcement} />
+          <main className={announcement.enabled ? "pt-[116px]" : "pt-[76px]"}>{children}</main>
           <Footer columns={footer.columns} />
         </CartProvider>
         <WhatsAppButton />
