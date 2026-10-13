@@ -6,8 +6,11 @@ type P = Partial<{
   images: string; video: string;
 }>;
 
-export default function ProductForm({ action, product }: { action: (formData: FormData) => void; product?: P }) {
+export default function ProductForm({ action, product, categories }: { action: (formData: FormData) => void; product?: P; categories?: string[] }) {
   const p = product || {};
+  const categoryOptions = categories && categories.length > 0
+    ? categories
+    : ["Outerwear","Tailoring","Knitwear","Shirting","Trousers","Footwear","Accessories"];
   const initialImages = (p.images || "").split(",").map((s) => s.trim()).filter(Boolean);
   return (
     <form action={action} className="bg-white border rounded-lg p-6 max-w-2xl">
@@ -20,7 +23,8 @@ export default function ProductForm({ action, product }: { action: (formData: Fo
         <div>
           <label className="block text-[11px] text-gray-500 mb-1.5">Category</label>
           <select name="category" defaultValue={p.category} className="w-full border rounded-md p-2.5 text-sm">
-            {["Outerwear","Tailoring","Knitwear","Shirting","Trousers","Footwear","Accessories"].map(c => <option key={c}>{c}</option>)}
+            {!categoryOptions.includes(p.category || "") && p.category && <option key={p.category}>{p.category}</option>}
+            {categoryOptions.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
         <div>
@@ -28,11 +32,11 @@ export default function ProductForm({ action, product }: { action: (formData: Fo
           <input name="collection" defaultValue={p.collection} className="w-full border rounded-md p-2.5 text-sm" />
         </div>
         <div>
-          <label className="block text-[11px] text-gray-500 mb-1.5">Price ($)</label>
+          <label className="block text-[11px] text-gray-500 mb-1.5">Price (₹)</label>
           <input name="price" type="number" defaultValue={p.price} required className="w-full border rounded-md p-2.5 text-sm" />
         </div>
         <div>
-          <label className="block text-[11px] text-gray-500 mb-1.5">Compare-at Price ($)</label>
+          <label className="block text-[11px] text-gray-500 mb-1.5">Compare-at Price (₹)</label>
           <input name="compareAt" type="number" defaultValue={p.compareAt ?? undefined} className="w-full border rounded-md p-2.5 text-sm" />
         </div>
         <div>

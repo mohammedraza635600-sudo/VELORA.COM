@@ -1,8 +1,13 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const WHATSAPP_NUMBER = "918200890373";
 
 export default function WhatsAppButton() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) return null;
+
   return (
     <Link
       href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi VELORA, I have a question about my order.")}`}
