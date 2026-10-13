@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,6 +12,12 @@ import { getSetting, DEFAULT_BRANDING, DEFAULT_NAV, DEFAULT_FOOTER, DEFAULT_ANNO
 export const metadata: Metadata = {
   title: "VELORA — Menswear, Defined by Distinction",
   description: "Quiet luxury menswear. Tailoring, outerwear and knitwear made for permanence.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
