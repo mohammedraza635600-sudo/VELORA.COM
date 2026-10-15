@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useCart } from "./CartContext";
+import Logo from "./Logo";
 
 type NavItem = { label: string; url: string };
 type Announcement = { text: string; enabled: boolean; bg: string; color: string; link?: string };
@@ -37,7 +38,7 @@ export default function Navbar({ items, announcement }: { items: NavItem[]; anno
         )}
         <div className="nav-pad flex items-center justify-between px-5 md:px-12 py-4 transition-[padding] duration-300">
           <button className="md:hidden text-xs tracking-widest active:scale-90 transition-transform" onClick={() => setOpen(true)}>MENU</button>
-          <Link href="/" className="font-serif text-2xl tracking-[.28em] active:scale-95 transition-transform inline-block">VELORA</Link>
+          <Link href="/" aria-label="VELORA — home" className="active:scale-95 transition-transform inline-block"><Logo tagline={false} className="h-10 w-auto" /></Link>
           <nav className="hidden md:flex gap-10 text-xs tracking-widest">
             {items.map((n) => (
               <Link key={n.label} href={n.url} className="relative hover:opacity-60 transition-opacity duration-300 group">

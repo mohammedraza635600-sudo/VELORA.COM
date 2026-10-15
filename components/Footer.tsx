@@ -1,3 +1,5 @@
+import Logo from "./Logo";
+
 type Col = { title: string; links: { label: string; url: string }[] };
 
 export default function Footer({ columns }: { columns: Col[] }) {
@@ -5,7 +7,7 @@ export default function Footer({ columns }: { columns: Col[] }) {
     <footer className="bg-charcoal text-cream pt-20 pb-8">
       <div className="max-w-[1400px] mx-auto px-5 md:px-12">
         <div className="grid md:grid-cols-4 gap-10 pb-16 border-b border-cream/10">
-          <div className="font-serif text-4xl tracking-wide">VELORA</div>
+          <div><Logo accent="#C9A961" className="w-full max-w-[260px] h-auto" /></div>
           {columns.map((c) => (
             <div key={c.title}>
               <h4 className="text-[11px] tracking-widest text-taupe mb-4">{c.title}</h4>
