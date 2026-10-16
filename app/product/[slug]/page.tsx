@@ -3,8 +3,27 @@ import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import AddToBag from "@/components/AddToBag";
 import ReviewsBox from "@/components/ReviewsBox";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await prisma.product.findUnique({ where: { slug } });
+  if (!product) return { title: "Product not found — VELORA" };
+  const description = (product.description || "Quiet luxury menswear from VELORA.").slice(0, 160);
+  const image = (product.images || "").split(",")[0]?.trim();
+  return {
+    title: `${product.name} — VELORA`,
+    description,
+    alternates: { canonical: `https://velora-com.vercel.app/product/${product.slug}` },
+    openGraph: {
+      title: `${product.name} — VELORA`,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

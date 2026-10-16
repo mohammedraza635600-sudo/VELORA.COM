@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { logoutAdmin } from "@/app/admin-login/actions";
+import { logoutAdmin } from "@/app/velora-staff-k9x2m/actions";
 
 const PERMS: Record<string, string[]> = {
   "/admin": ["SUPER_ADMIN","ADMIN","PRODUCT_MANAGER","ORDER_MANAGER","INVENTORY_MANAGER","CONTENT_MANAGER","MARKETING_MANAGER","SUPPORT"],
