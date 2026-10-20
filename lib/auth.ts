@@ -42,4 +42,16 @@ export async function getAdminSession() {
   }
 }
 
+// Every admin server action must call this (not getAdminSession directly).
+// Server Actions are callable POST endpoints on their own — without this check,
+// anyone who discovers the action's reference could run it even while logged out,
+// bypassing the page-level /admin redirect entirely.
+export async function requireAdminSession() {
+  const session = await getAdminSession();
+  if (!session) {
+    throw new Error("Unauthorized: admin session required");
+  }
+  return session;
+}
+
 export const ADMIN_COOKIE_NAME = COOKIE_NAME;

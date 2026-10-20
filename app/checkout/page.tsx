@@ -11,7 +11,11 @@ export default function CheckoutPage() {
   const [done, setDone] = useState<{ orderId: string; total: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const shipping = subtotal > 200 ? 0 : 15;
+  // Keep these in sync with app/actions.ts placeOrder() — both must agree so the
+  // total shown here matches what actually gets saved on the order.
+  const FREE_SHIPPING_OVER = 1999;
+  const SHIPPING_FEE = 99;
+  const shipping = subtotal > FREE_SHIPPING_OVER ? 0 : SHIPPING_FEE;
   const total = subtotal + shipping;
 
   function buildWhatsAppMessage(orderId: string, name: string, address: string, city: string, zip: string) {

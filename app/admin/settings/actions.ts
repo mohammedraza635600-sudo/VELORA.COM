@@ -1,10 +1,10 @@
 "use server";
 import { setSetting, logAudit, DEFAULT_NAV, DEFAULT_FOOTER } from "@/lib/settings";
-import { getAdminSession } from "@/lib/auth";
+import { requireAdminSession } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function saveBranding(formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const keys = ["primary","cream","oliveDeep","oliveDark","creamSoft","offWhite","taupe","charcoal"];
   const data: Record<string, string> = {};
   keys.forEach(k => data[k] = String(formData.get(k) || ""));
@@ -15,7 +15,7 @@ export async function saveBranding(formData: FormData) {
 }
 
 export async function saveHero(formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const data = {
     eyebrow: String(formData.get("eyebrow") || ""),
     title: String(formData.get("title") || ""),
@@ -31,7 +31,7 @@ export async function saveHero(formData: FormData) {
 }
 
 export async function saveNav(formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const labels = formData.getAll("navLabel").map(String);
   const urls = formData.getAll("navUrl").map(String);
   const items = labels.map((label, i) => ({ label, url: urls[i] || "#" })).filter(i => i.label);
@@ -42,7 +42,7 @@ export async function saveNav(formData: FormData) {
 }
 
 export async function saveAnnouncement(formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const data = {
     text: String(formData.get("text") || ""),
     link: String(formData.get("link") || ""),
@@ -57,7 +57,7 @@ export async function saveAnnouncement(formData: FormData) {
 }
 
 export async function saveFooter(formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const titles = formData.getAll("colTitle").map(String);
   const linksRaw = formData.getAll("colLinks").map(String); // each: "Label|URL\nLabel|URL"
   const columns = titles.map((title, i) => ({

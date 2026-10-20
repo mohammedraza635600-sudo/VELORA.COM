@@ -1,11 +1,11 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/settings";
-import { getAdminSession } from "@/lib/auth";
+import { requireAdminSession } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function upsertCoupon(formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const id = String(formData.get("id") || "");
   const data = {
     code: String(formData.get("code") || "").toUpperCase(),
@@ -22,7 +22,7 @@ export async function upsertCoupon(formData: FormData) {
   revalidatePath("/admin/coupons");
 }
 export async function deleteCoupon(id: string) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   await prisma.coupon.delete({ where: { id } });
   await logAudit("COUPON_DELETED", "coupons", session?.name || "admin", { id });
   revalidatePath("/admin/coupons");

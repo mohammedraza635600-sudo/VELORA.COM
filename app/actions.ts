@@ -16,7 +16,12 @@ export async function placeOrder(payload: {
   items: { productId: string; name: string; size: string; price: number; qty: number }[];
 }) {
   const subtotal = payload.items.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal > 200 ? 0 : 15;
+  // Free-shipping threshold / flat shipping fee, in ₹. These were left over from the old
+  // $ pricing (">200" / "15") when the site switched to INR, so free shipping was
+  // triggering on almost every order. Adjust these two numbers to whatever you want.
+  const FREE_SHIPPING_OVER = 1999;
+  const SHIPPING_FEE = 99;
+  const shipping = subtotal > FREE_SHIPPING_OVER ? 0 : SHIPPING_FEE;
   const total = subtotal + shipping;
 
   const result = await prisma.$transaction(async (tx) => {

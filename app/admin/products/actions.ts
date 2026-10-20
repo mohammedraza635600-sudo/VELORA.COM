@@ -3,14 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { logAudit } from "@/lib/settings";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { getAdminSession } from "@/lib/auth";
+import { requireAdminSession } from "@/lib/auth";
 
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 export async function createProduct(formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const name = String(formData.get("name") || "");
   const data = {
     name,
@@ -36,7 +36,7 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function updateProduct(id: string, formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const data = {
     name: String(formData.get("name") || ""),
     category: String(formData.get("category") || ""),
@@ -60,7 +60,7 @@ export async function updateProduct(id: string, formData: FormData) {
 }
 
 export async function deleteProduct(id: string) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   try {
     await prisma.product.delete({ where: { id } });
     await logAudit("PRODUCT_DELETED", "products", session?.name || "admin", { id });
@@ -79,7 +79,7 @@ export async function deleteProduct(id: string) {
 }
 
 export async function bulkUpdateProducts(formData: FormData) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const ids = formData.getAll("ids").map(String);
   const action = String(formData.get("bulkAction") || "");
   if (!ids.length || !action) return;
@@ -102,7 +102,7 @@ export async function bulkUpdateProducts(formData: FormData) {
 }
 
 export async function adjustStock(id: string, delta: number) {
-  const session = await getAdminSession();
+  const session = await requireAdminSession();
   const p = await prisma.product.findUnique({ where: { id } });
   if (!p) return;
   const next = Math.max(0, p.stock + delta);
