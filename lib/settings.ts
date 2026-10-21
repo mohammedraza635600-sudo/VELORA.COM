@@ -57,7 +57,7 @@ export const DEFAULT_NAV = {
 export const DEFAULT_FOOTER = {
   columns: [
     { title: "SHOP", links: [{ label: "Shop", url: "/shop" }, { label: "New In", url: "/shop" }, { label: "About", url: "/#story" }] },
-    { title: "CLIENT SERVICES", links: [{ label: "Shipping", url: "#" }, { label: "Returns", url: "#" }, { label: "FAQ", url: "#" }] },
+    { title: "CLIENT SERVICES", links: [{ label: "Shipping", url: "#" }, { label: "Returns", url: "#" }, { label: "Track Order", url: "/track-order" }, { label: "FAQ", url: "#" }] },
     { title: "SOCIAL", links: [{ label: "Instagram", url: "#" }, { label: "Pinterest", url: "#" }, { label: "TikTok", url: "#" }] },
   ],
 };

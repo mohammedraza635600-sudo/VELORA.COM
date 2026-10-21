@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import WishlistButton from "./WishlistButton";
 
 type P = { slug: string; name: string; category: string; price: number; stock: number; colors?: string | null; images?: string | null };
 
@@ -13,9 +15,9 @@ export default function ProductCard({ p }: { p: P }) {
       <div className="frame card-frame aspect-[3/4] relative">
         {img1 ? (
           <>
-            <img src={img1} alt={p.name} className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500" style={{ opacity: 1 }} />
+            <Image src={img1} alt={p.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover transition-opacity duration-500" />
             {img2 && (
-              <img src={img2} alt="" className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <Image src={img2} alt="" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             )}
           </>
         ) : (
@@ -24,6 +26,7 @@ export default function ProductCard({ p }: { p: P }) {
             <div className="bg layer-b" />
           </>
         )}
+        <WishlistButton slug={p.slug} className="absolute top-3 right-3 z-10" />
         {p.stock === 0 && (
           <span className="absolute left-3 bottom-3 text-[10px] tracking-widest text-cream/80 z-10">OUT OF STOCK</span>
         )}

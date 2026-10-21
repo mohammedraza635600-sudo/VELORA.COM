@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartContext";
+import { WishlistProvider } from "@/components/WishlistContext";
 import RevealScript from "@/components/RevealScript";
 import Preloader from "@/components/Preloader";
 import GlobalMotion from "@/components/GlobalMotion";
@@ -53,9 +54,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Preloader />
         <GlobalMotion />
         <CartProvider>
-          <Navbar items={nav.items} announcement={announcement} />
-          <main className={announcement.enabled ? "pt-[116px]" : "pt-[76px]"}>{children}</main>
-          <Footer columns={footer.columns} />
+          <WishlistProvider>
+            <Navbar items={nav.items} announcement={announcement} />
+            <main className={announcement.enabled ? "pt-[116px]" : "pt-[76px]"}>{children}</main>
+            <Footer columns={footer.columns} />
+          </WishlistProvider>
         </CartProvider>
         <WhatsAppButton />
         <RevealScript />

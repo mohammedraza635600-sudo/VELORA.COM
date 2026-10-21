@@ -50,13 +50,14 @@ model Collection {
 }
 
 model Customer {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  phone     String?
-  status    String   @default("active")
-  createdAt DateTime @default(now())
-  orders    Order[]
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  status       String   @default("active")
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  orders       Order[]
 }
 
 model Order {
@@ -77,6 +78,8 @@ model Order {
   status     String      @default("pending") // pending|processing|packed|shipped|delivered|cancelled|refunded|returned
   carrier    String?
   tracking   String?
+  couponCode String?
+  discount   Int         @default(0)
   createdAt  DateTime    @default(now())
 }
 
@@ -99,8 +102,15 @@ model Coupon {
   value      Int      @default(0)
   minOrder   Int      @default(0)
   usageLimit Int      @default(0)
+  usedCount  Int      @default(0)
   active     Boolean  @default(true)
   expiry     String?
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
 }
 
 model Review {

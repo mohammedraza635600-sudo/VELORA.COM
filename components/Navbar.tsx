@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useCart } from "./CartContext";
+import { useWishlist } from "./WishlistContext";
 import Logo from "./Logo";
 
 type NavItem = { label: string; url: string };
@@ -11,6 +12,7 @@ export default function Navbar({ items, announcement }: { items: NavItem[]; anno
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { count } = useCart();
+  const { count: wishCount } = useWishlist();
   const showAnnouncement = !!announcement?.enabled && !scrolled;
 
   useEffect(() => {
@@ -49,6 +51,8 @@ export default function Navbar({ items, announcement }: { items: NavItem[]; anno
           </nav>
           <div className="flex gap-6 text-xs tracking-widest items-center">
             <Link href="/search" className="hidden md:inline hover:opacity-60 transition-opacity">SEARCH</Link>
+            <Link href="/account" className="hidden md:inline hover:opacity-60 transition-opacity">ACCOUNT</Link>
+            <Link href="/wishlist" aria-label="Wishlist" className="hover:opacity-60 transition-opacity">SAVED{wishCount > 0 ? ` (${wishCount})` : ""}</Link>
             <Link href="/cart" className="active:scale-90 transition-transform inline-block">BAG ({count})</Link>
           </div>
         </div>
@@ -72,6 +76,8 @@ export default function Navbar({ items, announcement }: { items: NavItem[]; anno
             {n.label}
           </Link>
         ))}
+        <Link href="/account" onClick={() => setOpen(false)} className="text-cream/80 text-xs tracking-widest mt-4">ACCOUNT</Link>
+        <Link href="/track-order" onClick={() => setOpen(false)} className="text-cream/80 text-xs tracking-widest">TRACK ORDER</Link>
       </div>
     </>
   );

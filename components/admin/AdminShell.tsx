@@ -12,6 +12,7 @@ const PERMS: Record<string, string[]> = {
   "/admin/orders": ["SUPER_ADMIN","ADMIN","ORDER_MANAGER","SUPPORT"],
   "/admin/coupons": ["SUPER_ADMIN","ADMIN","MARKETING_MANAGER"],
   "/admin/reviews": ["SUPER_ADMIN","ADMIN","MARKETING_MANAGER","SUPPORT"],
+  "/admin/subscribers": ["SUPER_ADMIN","ADMIN","MARKETING_MANAGER"],
   "/admin/settings": ["SUPER_ADMIN","ADMIN","CONTENT_MANAGER","MARKETING_MANAGER"],
   "/admin/audit-logs": ["SUPER_ADMIN","ADMIN"],
 };
@@ -19,7 +20,7 @@ const PERMS: Record<string, string[]> = {
 const NAV = [
   { group: "Overview", items: [["/admin", "Dashboard"]] },
   { group: "Catalog", items: [["/admin/products", "Products"], ["/admin/collections", "Collections"], ["/admin/categories", "Categories"]] },
-  { group: "Sales", items: [["/admin/orders", "Orders"], ["/admin/coupons", "Coupons"], ["/admin/reviews", "Reviews"]] },
+  { group: "Sales", items: [["/admin/orders", "Orders"], ["/admin/coupons", "Coupons"], ["/admin/reviews", "Reviews"], ["/admin/subscribers", "Subscribers"]] },
   { group: "Storefront CMS", items: [["/admin/settings", "Website Builder"]] },
   { group: "System", items: [["/admin/audit-logs", "Audit Logs"]] },
 ];

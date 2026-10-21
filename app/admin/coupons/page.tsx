@@ -11,16 +11,17 @@ export default async function CouponsAdmin() {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white border rounded-lg overflow-hidden h-fit">
           <table className="w-full text-[12.5px]">
-            <thead><tr className="bg-gray-50 text-left text-[10.5px] text-gray-500"><th className="p-3">Code</th><th className="p-3">Type</th><th className="p-3">Value</th><th className="p-3">Active</th><th className="p-3"></th></tr></thead>
+            <thead><tr className="bg-gray-50 text-left text-[10.5px] text-gray-500"><th className="p-3">Code</th><th className="p-3">Type</th><th className="p-3">Value</th><th className="p-3">Used</th><th className="p-3">Active</th><th className="p-3"></th></tr></thead>
             <tbody>
               {coupons.map((c) => (
                 <tr key={c.id} className="border-t">
                   <td className="p-3 font-medium">{c.code}</td><td className="p-3">{c.type}</td><td className="p-3">{c.value}</td>
+                  <td className="p-3">{c.usedCount}{c.usageLimit > 0 ? ` / ${c.usageLimit}` : ""}</td>
                   <td className="p-3">{c.active ? "Yes" : "No"}</td>
                   <td className="p-3"><form action={deleteCoupon.bind(null, c.id)}><button className="text-red-600 text-[11px]">Delete</button></form></td>
                 </tr>
               ))}
-              {coupons.length === 0 && <tr><td colSpan={5} className="p-6 text-center text-gray-400">No coupons yet.</td></tr>}
+              {coupons.length === 0 && <tr><td colSpan={6} className="p-6 text-center text-gray-400">No coupons yet.</td></tr>}
             </tbody>
           </table>
         </div>
@@ -31,7 +32,7 @@ export default async function CouponsAdmin() {
             <option value="percentage">percentage</option><option value="fixed">fixed</option><option value="free_shipping">free_shipping</option>
           </select>
           <input name="value" type="number" placeholder="Value" className="w-full border rounded-md p-2.5 text-sm mb-2.5" />
-          <input name="minOrder" type="number" placeholder="Minimum order ($)" className="w-full border rounded-md p-2.5 text-sm mb-2.5" />
+          <input name="minOrder" type="number" placeholder="Minimum order (₹)" className="w-full border rounded-md p-2.5 text-sm mb-2.5" />
           <input name="usageLimit" type="number" placeholder="Usage limit" className="w-full border rounded-md p-2.5 text-sm mb-2.5" />
           <input name="expiry" placeholder="Expiry (YYYY-MM-DD)" className="w-full border rounded-md p-2.5 text-sm mb-2.5" />
           <label className="flex items-center gap-2 text-sm mb-3.5"><input type="checkbox" name="active" defaultChecked /> Active</label>

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useCart } from "@/components/CartContext";
-import { placeOrder } from "@/app/actions";
+import { placeOrder, validateCoupon } from "@/app/actions";
 
 const WHATSAPP_NUMBER = "918200890373";
 
@@ -11,12 +11,39 @@ export default function CheckoutPage() {
   const [done, setDone] = useState<{ orderId: string; total: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState<{ code: string; type: string; discount: number; message: string } | null>(null);
+  const [couponMsg, setCouponMsg] = useState("");
+  const [couponBusy, setCouponBusy] = useState(false);
   // Keep these in sync with app/actions.ts placeOrder() — both must agree so the
   // total shown here matches what actually gets saved on the order.
   const FREE_SHIPPING_OVER = 1999;
   const SHIPPING_FEE = 99;
-  const shipping = subtotal > FREE_SHIPPING_OVER ? 0 : SHIPPING_FEE;
-  const total = subtotal + shipping;
+  const discount = coupon?.discount || 0;
+  const afterDiscount = Math.max(0, subtotal - discount);
+  const shipping = coupon?.type === "free_shipping" || afterDiscount > FREE_SHIPPING_OVER ? 0 : SHIPPING_FEE;
+  const total = afterDiscount + shipping;
+
+  async function applyCoupon() {
+    if (!couponInput.trim()) return;
+    setCouponBusy(true);
+    setCouponMsg("");
+    const res = await validateCoupon(couponInput, subtotal);
+    setCouponBusy(false);
+    if (res.ok) {
+      setCoupon({ code: res.code!, type: res.type!, discount: res.discount!, message: res.message! });
+      setCouponMsg(res.message);
+    } else {
+      setCoupon(null);
+      setCouponMsg(res.message);
+    }
+  }
+
+  function removeCoupon() {
+    setCoupon(null);
+    setCouponInput("");
+    setCouponMsg("");
+  }
 
   function buildWhatsAppMessage(orderId: string, name: string, address: string, city: string, zip: string) {
     const lines = [
@@ -51,6 +78,7 @@ export default function CheckoutPage() {
       const result = await placeOrder({
         name, email, address, city, zip,
         method,
+        couponCode: coupon?.code,
         items: items.map((i) => ({ productId: i.productId, name: i.name, size: i.size, price: i.price, qty: i.qty })),
       });
       setLoading(false);
@@ -82,7 +110,10 @@ export default function CheckoutPage() {
         ) : (
           <p className="text-sm text-taupe mt-2">It will now appear in the store&rsquo;s order management.</p>
         )}
-        <a href="/" className="btn mt-8 inline-flex">CONTINUE SHOPPING</a>
+        <div className="flex gap-3 justify-center mt-8">
+          <a href="/" className="btn">CONTINUE SHOPPING</a>
+          <a href="/track-order" className="btn" style={{ background: "transparent", color: "var(--olive)", border: "1px solid var(--olive)" }}>TRACK ORDER</a>
+        </div>
       </div>
     );
   }
@@ -111,6 +142,32 @@ export default function CheckoutPage() {
           {items.map((it, i) => (
             <div key={i} className="flex justify-between text-sm py-2"><span>{it.name} × {it.qty}</span><span>₹{it.price * it.qty}</span></div>
           ))}
+
+          <div className="py-2">
+            {coupon ? (
+              <div className="flex items-center justify-between text-[12px] bg-white/60 border border-olive/40 rounded px-2.5 py-2">
+                <span>Coupon <strong>{coupon.code}</strong> applied</span>
+                <button type="button" onClick={removeCoupon} className="text-red-600 underline">Remove</button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                  placeholder="Coupon code"
+                  className="border border-black/20 p-2 text-sm bg-transparent flex-1"
+                />
+                <button type="button" onClick={applyCoupon} disabled={couponBusy} className="border border-olive text-olive text-xs px-3 tracking-wide">
+                  {couponBusy ? "…" : "APPLY"}
+                </button>
+              </div>
+            )}
+            {couponMsg && !coupon && <p className="text-[11px] text-red-600 mt-1.5">{couponMsg}</p>}
+          </div>
+
+          {discount > 0 && (
+            <div className="flex justify-between text-sm py-2 text-olive"><span>Discount</span><span>-₹{discount}</span></div>
+          )}
           <div className="flex justify-between text-sm py-2"><span>Shipping</span><span>{shipping === 0 ? "Free" : `₹${shipping}`}</span></div>
           <div className="flex justify-between text-base font-medium border-t border-black/15 mt-2 pt-3.5"><span>Total</span><span>₹{total}</span></div>
           {error && <p className="text-[12px] text-red-600 mb-3">{error}</p>}

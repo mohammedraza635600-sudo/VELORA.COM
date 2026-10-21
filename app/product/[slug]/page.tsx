@@ -4,6 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import AddToBag from "@/components/AddToBag";
 import ReviewsBox from "@/components/ReviewsBox";
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           {images.length > 0 ? (
             images.map((url, i) => (
               <div key={url + i} className="relative aspect-[4/5] rounded-sm overflow-hidden">
-                <img src={url} alt={`${product.name} — view ${i + 1}`} className="w-full h-full object-cover" />
+                <Image src={url} alt={`${product.name} — view ${i + 1}`} fill priority={i === 0} sizes="(max-width: 768px) 100vw, 55vw" className="object-cover" />
               </div>
             ))
           ) : !product.video ? (
