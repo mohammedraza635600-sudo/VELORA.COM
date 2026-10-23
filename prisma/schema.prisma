@@ -66,6 +66,7 @@ model Order {
   customer   Customer?   @relation(fields: [customerId], references: [id])
   email      String
   name       String
+  phone      String?
   address    String?
   city       String?
   zip        String?

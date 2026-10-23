@@ -21,6 +21,10 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
+// Settings (nav, footer, announcement, colours) are edited live from the admin panel, so every
+// page must be rendered fresh — otherwise pages like /cart or /checkout keep the build-time copy.
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const [branding, nav, footer, announcement] = await Promise.all([
     getSetting("branding", DEFAULT_BRANDING),

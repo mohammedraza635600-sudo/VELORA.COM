@@ -25,7 +25,12 @@ export function createSessionCookieValue(name: string, role: string) {
 }
 
 export function isValidAdminPassword(password: string) {
-  return password === (process.env.ADMIN_PASSWORD || "");
+  const expected = process.env.ADMIN_PASSWORD || "";
+  if (!expected) return false; // never allow login when no password is configured
+  // Constant-time comparison (hash first so both buffers have equal length).
+  const a = crypto.createHash("sha256").update(password).digest();
+  const b = crypto.createHash("sha256").update(expected).digest();
+  return crypto.timingSafeEqual(a, b);
 }
 
 export async function getAdminSession() {
@@ -36,6 +41,9 @@ export async function getAdminSession() {
   if (!base) return null;
   try {
     const payload = JSON.parse(Buffer.from(base, "base64url").toString("utf8"));
+    // The cookie's own maxAge is only a browser-side hint — enforce the 8h lifetime here too,
+    // so a copied/stolen cookie stops working after it expires.
+    if (typeof payload.ts !== "number" || Date.now() - payload.ts > 8 * 60 * 60 * 1000) return null;
     return payload as { name: string; role: string; ts: number };
   } catch {
     return null;

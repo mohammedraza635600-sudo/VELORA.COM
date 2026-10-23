@@ -16,9 +16,9 @@ export default async function OrdersAdmin() {
           <tbody>
             {orders.map((o) => (
               <tr key={o.id} className="border-t align-top">
-                <td className="p-3">{o.name}<br /><span className="text-gray-400 text-[11px]">{o.email}</span></td>
+                <td className="p-3">{o.name}<br /><span className="text-gray-400 text-[11px]">{o.email}</span>{o.phone && <><br /><span className="text-gray-400 text-[11px]">{o.phone}</span></>}</td>
                 <td className="p-3">{o.items.reduce((s, i) => s + i.qty, 0)}</td>
-                <td className="p-3">₹{o.total}</td>
+                <td className="p-3">₹{o.total}{o.discount > 0 && <><br /><span className="text-[10.5px] text-green-700">{o.couponCode} (-₹{o.discount})</span></>}</td>
                 <td className="p-3">
                   <form action={updatePayment.bind(null, o.id)} className="flex flex-col gap-1">
                     <select name="payment" defaultValue={o.payment} className={`border rounded p-1 text-[11px] ${o.payment === "Paid" ? "bg-green-50 text-green-700" : "bg-amber-50 text-amber-700"}`}>

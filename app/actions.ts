@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 import { hashPassword, verifyPassword, createCustomerSession, clearCustomerSession, getCustomerSession } from "@/lib/customerAuth";
 
 export async function submitReview(productId: string, formData: FormData) {
-  const rating = Number(formData.get("rating") || 5);
-  const name = String(formData.get("name") || "Anonymous").trim() || "Anonymous";
-  const text = String(formData.get("text") || "").trim();
+  const rating = Math.min(5, Math.max(1, Math.round(Number(formData.get("rating") || 5)) || 5));
+  const name = String(formData.get("name") || "Anonymous").trim().slice(0, 60) || "Anonymous";
+  const text = String(formData.get("text") || "").trim().slice(0, 1000);
   if (!text) return;
+  const exists = await prisma.product.findUnique({ where: { id: productId }, select: { id: true } });
+  if (!exists) return;
   await prisma.review.create({ data: { productId, rating, name, text, approved: false } });
   revalidatePath(`/product`);
 }
@@ -40,22 +42,56 @@ export async function validateCoupon(code: string, subtotal: number) {
 }
 
 export async function placeOrder(payload: {
-  name: string; email: string; address: string; city: string; zip: string; method: string;
+  name: string; email: string; phone?: string; address: string; city: string; zip: string; method: string;
   couponCode?: string;
   items: { productId: string; name: string; size: string; price: number; qty: number }[];
 }) {
-  const subtotal = payload.items.reduce((s, i) => s + i.price * i.qty, 0);
+  // Basic input checks — everything coming from the browser is untrusted.
+  const name = String(payload.name || "").trim().slice(0, 120);
+  const email = String(payload.email || "").trim().slice(0, 200);
+  if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    throw new Error("Please enter your name and a valid email address.");
+  }
+  if (!Array.isArray(payload.items) || payload.items.length === 0 || payload.items.length > 50) {
+    throw new Error("Your bag is empty.");
+  }
+  const lines = payload.items.map((i) => ({
+    productId: String(i.productId),
+    size: String(i.size || "").slice(0, 10),
+    qty: Math.floor(Number(i.qty)),
+  }));
+  if (lines.some((l) => !Number.isFinite(l.qty) || l.qty < 1 || l.qty > 20)) {
+    throw new Error("Invalid quantity in your bag.");
+  }
+
   // If the buyer is signed in, attach the order to their account so it shows in order history.
   const customerSession = await getCustomerSession();
 
   const result = await prisma.$transaction(async (tx) => {
-    // Lock-step stock check — prevents overselling if two customers order the last item at once.
-    for (const item of payload.items) {
-      const product = await tx.product.findUnique({ where: { id: item.productId }, select: { stock: true, name: true } });
-      if (!product || product.stock < item.qty) {
-        throw new Error(`Sorry, "${item.name}" only has ${product?.stock ?? 0} left in stock.`);
+    // Prices and names ALWAYS come from the database, never from the browser —
+    // otherwise anyone could edit the request and buy at any price.
+    const products = await tx.product.findMany({ where: { id: { in: lines.map((l) => l.productId) } } });
+    const byId = new Map(products.map((p) => [p.id, p]));
+
+    // Total quantity per product (the same product can be in the bag in several sizes).
+    const wanted = new Map<string, number>();
+    for (const l of lines) wanted.set(l.productId, (wanted.get(l.productId) || 0) + l.qty);
+
+    for (const [productId, qty] of wanted) {
+      const product = byId.get(productId);
+      if (!product || product.status !== "published") {
+        throw new Error("Sorry, an item in your bag is no longer available. Please remove it and try again.");
+      }
+      if (product.stock < qty) {
+        throw new Error(`Sorry, "${product.name}" only has ${product.stock} left in stock.`);
       }
     }
+
+    const orderLines = lines.map((l) => {
+      const p = byId.get(l.productId)!;
+      return { productId: p.id, name: p.name, size: l.size, price: p.price, qty: l.qty };
+    });
+    const subtotal = orderLines.reduce((s, i) => s + i.price * i.qty, 0);
 
     // Re-validate and apply the coupon server-side — never trust a discount amount
     // sent from the browser.
@@ -65,9 +101,9 @@ export async function placeOrder(payload: {
     if (payload.couponCode) {
       const clean = payload.couponCode.trim().toUpperCase();
       const coupon = await tx.coupon.findUnique({ where: { code: clean } });
-      const validMinOrder = !coupon || subtotal >= coupon.minOrder;
-      const validExpiry = !coupon?.expiry || new Date(coupon.expiry) >= new Date();
-      const validUsage = !coupon || coupon.usageLimit === 0 || coupon.usedCount < coupon.usageLimit;
+      const validMinOrder = !!coupon && subtotal >= coupon.minOrder;
+      const validExpiry = !!coupon && (!coupon.expiry || new Date(coupon.expiry) >= new Date());
+      const validUsage = !!coupon && (coupon.usageLimit === 0 || coupon.usedCount < coupon.usageLimit);
       if (coupon && coupon.active && validExpiry && validUsage && validMinOrder) {
         couponCode = coupon.code;
         if (coupon.type === "percentage") discount = Math.round((subtotal * coupon.value) / 100);
@@ -84,12 +120,13 @@ export async function placeOrder(payload: {
     const order = await tx.order.create({
       data: {
         customerId: customerSession?.customerId ?? null,
-        name: payload.name,
-        email: payload.email,
-        address: payload.address,
-        city: payload.city,
-        zip: payload.zip,
-        method: payload.method,
+        name,
+        email,
+        phone: String(payload.phone || "").trim().slice(0, 30) || null,
+        address: String(payload.address || "").slice(0, 300),
+        city: String(payload.city || "").slice(0, 100),
+        zip: String(payload.zip || "").slice(0, 20),
+        method: "whatsapp",
         // No real payment gateway is connected yet — never mark an order "Paid"
         // just because the browser reached this page. Admin confirms payment manually.
         payment: "Pending",
@@ -98,29 +135,33 @@ export async function placeOrder(payload: {
         discount,
         couponCode,
         total,
-        items: {
-          create: payload.items.map((i) => ({
-            productId: i.productId,
-            name: i.name,
-            size: i.size,
-            price: i.price,
-            qty: i.qty,
-          })),
-        },
+        items: { create: orderLines },
       },
     });
 
-    for (const item of payload.items) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stock: { decrement: item.qty } },
+    for (const [productId, qty] of wanted) {
+      // Guarded decrement: only succeeds if enough stock is still there at this instant,
+      // so two simultaneous orders can never push stock below zero.
+      const res = await tx.product.updateMany({
+        where: { id: productId, stock: { gte: qty } },
+        data: { stock: { decrement: qty } },
       });
+      if (res.count === 0) {
+        throw new Error(`Sorry, "${byId.get(productId)!.name}" just sold out. Please update your bag.`);
+      }
     }
 
-    return order;
+    return { order, orderLines, subtotal, shipping, discount };
   });
 
-  return { orderId: result.id, total: result.total };
+  return {
+    orderId: result.order.id,
+    total: result.order.total,
+    subtotal: result.subtotal,
+    shipping: result.shipping,
+    discount: result.discount,
+    items: result.orderLines.map((l) => ({ name: l.name, size: l.size, qty: l.qty, price: l.price })),
+  };
 }
 
 export async function trackOrder(orderId: string, email: string) {

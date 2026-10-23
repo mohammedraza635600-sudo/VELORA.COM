@@ -5,13 +5,14 @@ import AddToBag from "@/components/AddToBag";
 import ReviewsBox from "@/components/ReviewsBox";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const product = await prisma.product.findUnique({ where: { slug } });
-  if (!product) return { title: "Product not found — VELORA" };
+  if (!product || product.status !== "published") return { title: "Product not found — VELORA", robots: { index: false } };
   const description = (product.description || "Quiet luxury menswear from VELORA.").slice(0, 160);
   const image = (product.images || "").split(",")[0]?.trim();
   return {
@@ -30,6 +31,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product) return notFound();
+  // Drafts and archived products are not public. A signed-in admin can still preview them.
+  if (product.status !== "published" && !(await getAdminSession())) return notFound();
 
   const [related, reviews] = await Promise.all([
     prisma.product.findMany({ where: { status: "published", id: { not: product.id } }, take: 4 }),

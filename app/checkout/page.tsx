@@ -45,18 +45,22 @@ export default function CheckoutPage() {
     setCouponMsg("");
   }
 
-  function buildWhatsAppMessage(orderId: string, name: string, address: string, city: string, zip: string) {
+  // Built from what the server actually saved (real prices, discount, shipping, total),
+  // so the WhatsApp message always matches the order even if a price changed meanwhile.
+  function buildWhatsAppMessage(r: Awaited<ReturnType<typeof placeOrder>>, name: string, phone: string, address: string, city: string, zip: string) {
     const lines = [
-      `*New VELORA Order* — #${orderId.slice(-8).toUpperCase()}`,
+      `*New VELORA Order* — #${r.orderId.slice(-8).toUpperCase()}`,
       ``,
       `*Customer:* ${name}`,
+      ...(phone ? [`*Phone:* ${phone}`] : []),
       `*Delivery Address:* ${address}${city ? ", " + city : ""}${zip ? " - " + zip : ""}`,
       ``,
       `*Items:*`,
-      ...items.map((it) => `• ${it.name} (Size ${it.size}) × ${it.qty} — ₹${it.price * it.qty}`),
+      ...r.items.map((it) => `• ${it.name} (Size ${it.size}) × ${it.qty} — ₹${it.price * it.qty}`),
       ``,
-      `Shipping: ${shipping === 0 ? "Free" : "₹" + shipping}`,
-      `*Total: ₹${total}*`,
+      ...(r.discount > 0 ? [`Discount: -₹${r.discount}`] : []),
+      `Shipping: ${r.shipping === 0 ? "Free" : "₹" + r.shipping}`,
+      `*Total: ₹${r.total}*`,
       ``,
       `Please confirm this order and share payment details. Thank you!`,
     ];
@@ -68,6 +72,7 @@ export default function CheckoutPage() {
     const form = new FormData(e.currentTarget);
     const name = `${form.get("first")} ${form.get("last")}`.trim();
     const email = String(form.get("email") || "");
+    const phone = String(form.get("phone") || "");
     const address = String(form.get("address") || "");
     const city = String(form.get("city") || "");
     const zip = String(form.get("zip") || "");
@@ -76,7 +81,7 @@ export default function CheckoutPage() {
     setLoading(true);
     try {
       const result = await placeOrder({
-        name, email, address, city, zip,
+        name, email, phone, address, city, zip,
         method,
         couponCode: coupon?.code,
         items: items.map((i) => ({ productId: i.productId, name: i.name, size: i.size, price: i.price, qty: i.qty })),
@@ -86,7 +91,7 @@ export default function CheckoutPage() {
       clear();
 
       if (method === "whatsapp") {
-        const msg = buildWhatsAppMessage(result.orderId, name, address, city, zip);
+        const msg = buildWhatsAppMessage(result, name, phone, address, city, zip);
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
       }
     } catch (err: any) {
@@ -129,6 +134,7 @@ export default function CheckoutPage() {
             <input name="last" placeholder="Last name" className="border border-black/20 p-3 text-sm bg-transparent" />
           </div>
           <input name="email" type="email" placeholder="Email" required className="border border-black/20 p-3 text-sm bg-transparent w-full mb-3" />
+          <input name="phone" type="tel" placeholder="Phone / WhatsApp number" className="border border-black/20 p-3 text-sm bg-transparent w-full mb-3" />
           <input name="address" placeholder="Address" className="border border-black/20 p-3 text-sm bg-transparent w-full mb-3" />
           <div className="grid grid-cols-2 gap-3 mb-3">
             <input name="city" placeholder="City" className="border border-black/20 p-3 text-sm bg-transparent" />

@@ -66,6 +66,7 @@ export async function getCustomerSession() {
   if (!base) return null;
   try {
     const payload = JSON.parse(Buffer.from(base, "base64url").toString("utf8"));
+    if (typeof payload.ts !== "number" || Date.now() - payload.ts > 30 * 24 * 60 * 60 * 1000) return null;
     return payload as { customerId: string; email: string; name: string; ts: number };
   } catch {
     return null;
