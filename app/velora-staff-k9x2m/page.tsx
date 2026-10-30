@@ -11,7 +11,7 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
       <form action={loginAdmin} className="bg-white rounded-xl p-9 w-[360px] max-w-[90vw]">
         <h1 className="text-lg font-semibold mb-1">VELORA Admin</h1>
         <p className="text-xs text-gray-500 mb-5">Sign in to the control center.</p>
-        {sp.error && <p className="text-xs text-red-600 mb-3">Incorrect password.</p>}
+        {sp.error && <p className="text-xs text-red-600 mb-3">{sp.error === "locked" ? "Too many attempts. Please try again in 15 minutes." : "Incorrect password."}</p>}
         <label className="block text-[11px] text-gray-500 mb-1.5">Your name</label>
         <input name="name" defaultValue="Admin" className="w-full border rounded-md p-2.5 mb-3.5 text-sm" />
         <label className="block text-[11px] text-gray-500 mb-1.5">Role</label>

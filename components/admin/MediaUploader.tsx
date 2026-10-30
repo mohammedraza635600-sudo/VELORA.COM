@@ -18,7 +18,6 @@ async function uploadFile(file: File, folder: string): Promise<string> {
       Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
       apikey: SUPABASE_ANON_KEY,
       "Content-Type": file.type || "application/octet-stream",
-      "x-upsert": "true",
     },
     body: file,
   });

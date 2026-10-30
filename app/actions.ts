@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { clientIp, isLockedOut, recordFailure } from "@/lib/rateLimit";
 import { hashPassword, verifyPassword, createCustomerSession, clearCustomerSession, getCustomerSession } from "@/lib/customerAuth";
 
 export async function submitReview(productId: string, formData: FormData) {
@@ -227,8 +228,13 @@ export async function signupCustomer(formData: FormData) {
 export async function loginCustomer(formData: FormData) {
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
+  const key = `${await clientIp()}|${email}`.slice(0, 200);
+  if (await isLockedOut("CUSTOMER_LOGIN_FAILED", key)) {
+    return { ok: false, message: "Too many attempts. Please try again in 15 minutes." };
+  }
   const customer = await prisma.customer.findUnique({ where: { email } });
   if (!customer || !customer.passwordHash || !verifyPassword(password, customer.passwordHash)) {
+    await recordFailure("CUSTOMER_LOGIN_FAILED", key);
     return { ok: false, message: "Incorrect email or password." };
   }
   await createCustomerSession(customer.id, customer.email, customer.name);
