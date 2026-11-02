@@ -1,6 +1,7 @@
 import Logo from "./Logo";
 import NewsletterForm from "./NewsletterForm";
 import NotifyButton from "./NotifyButton";
+import InstallButton from "./InstallButton";
 
 type Col = { title: string; links: { label: string; url: string }[] };
 
@@ -20,7 +21,8 @@ export default function Footer({ columns }: { columns: Col[] }) {
           ))}
           <div>
             <NewsletterForm />
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col gap-3 items-start">
+              <InstallButton className="text-xs tracking-wide border border-cream/40 px-3 py-2" />
               <NotifyButton audience="customer" labelOff="🔔 Get offer alerts" labelOn="🔔 Offer alerts on (tap to turn off)" className="text-xs tracking-wide border border-cream/40 px-3 py-2" />
             </div>
           </div>
