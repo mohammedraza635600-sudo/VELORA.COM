@@ -138,3 +138,12 @@ model AuditLog {
   by       String
   ts       DateTime @default(now())
 }
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  audience  String   @default("customer") // admin | customer
+  createdAt DateTime @default(now())
+}

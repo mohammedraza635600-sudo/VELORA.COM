@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { logoutAdmin } from "@/app/velora-staff-k9x2m/actions";
+import NotifyButton from "@/components/NotifyButton";
 
 const PERMS: Record<string, string[]> = {
   "/admin": ["SUPER_ADMIN","ADMIN","PRODUCT_MANAGER","ORDER_MANAGER","INVENTORY_MANAGER","CONTENT_MANAGER","MARKETING_MANAGER","SUPPORT"],
@@ -13,6 +14,7 @@ const PERMS: Record<string, string[]> = {
   "/admin/coupons": ["SUPER_ADMIN","ADMIN","MARKETING_MANAGER"],
   "/admin/reviews": ["SUPER_ADMIN","ADMIN","MARKETING_MANAGER","SUPPORT"],
   "/admin/subscribers": ["SUPER_ADMIN","ADMIN","MARKETING_MANAGER"],
+  "/admin/notifications": ["SUPER_ADMIN","ADMIN","MARKETING_MANAGER"],
   "/admin/settings": ["SUPER_ADMIN","ADMIN","CONTENT_MANAGER","MARKETING_MANAGER"],
   "/admin/audit-logs": ["SUPER_ADMIN","ADMIN"],
 };
@@ -20,7 +22,7 @@ const PERMS: Record<string, string[]> = {
 const NAV = [
   { group: "Overview", items: [["/admin", "Dashboard"]] },
   { group: "Catalog", items: [["/admin/products", "Products"], ["/admin/collections", "Collections"], ["/admin/categories", "Categories"]] },
-  { group: "Sales", items: [["/admin/orders", "Orders"], ["/admin/coupons", "Coupons"], ["/admin/reviews", "Reviews"], ["/admin/subscribers", "Subscribers"]] },
+  { group: "Sales", items: [["/admin/orders", "Orders"], ["/admin/coupons", "Coupons"], ["/admin/reviews", "Reviews"], ["/admin/subscribers", "Subscribers"], ["/admin/notifications", "Notifications"]] },
   { group: "Storefront CMS", items: [["/admin/settings", "Website Builder"]] },
   { group: "System", items: [["/admin/audit-logs", "Audit Logs"]] },
 ];
@@ -71,7 +73,10 @@ export default function AdminShell({ children, session }: { children: React.Reac
             <button className="md:hidden border rounded px-2.5 py-1.5 text-xs flex-shrink-0" onClick={() => setOpen(true)}>☰</button>
             <div className="text-xs text-gray-500 truncate">Signed in as <b className="text-black">{session.name}</b><span className="ml-1.5 bg-[#eef2ec] text-[#344A38] px-2 py-0.5 rounded-full text-[10.5px] hidden sm:inline">{session.role}</span></div>
           </div>
-          <form action={logoutAdmin}><button className="text-xs text-gray-500 underline flex-shrink-0">Log out</button></form>
+          <div className="flex items-center gap-4 flex-shrink-0">
+            <NotifyButton audience="admin" labelOff="🔔 Order alerts" labelOn="🔔 Alerts on" className="text-xs border rounded px-2.5 py-1.5" />
+            <form action={logoutAdmin}><button className="text-xs text-gray-500 underline">Log out</button></form>
+          </div>
         </div>
         <div className="p-4 md:p-6 max-w-[1300px] overflow-x-auto">{children}</div>
       </div>

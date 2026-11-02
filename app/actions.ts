@@ -1,6 +1,8 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { sendPush } from "@/lib/push";
+import { getAdminSession } from "@/lib/auth";
 import { clientIp, isLockedOut, recordFailure } from "@/lib/rateLimit";
 import { hashPassword, verifyPassword, createCustomerSession, clearCustomerSession, getCustomerSession } from "@/lib/customerAuth";
 
@@ -155,6 +157,15 @@ export async function placeOrder(payload: {
     return { order, orderLines, subtotal, shipping, discount };
   });
 
+  // Tell the store owner's phone about the new order. Never lets a notification problem break an order.
+  try {
+    await sendPush("admin", {
+      title: "New order 🛍️",
+      body: `${name} — ₹${result.order.total} (#${result.order.id.slice(-8).toUpperCase()})`,
+      url: "/admin/orders",
+    });
+  } catch {}
+
   return {
     orderId: result.order.id,
     total: result.order.total,
@@ -243,4 +254,27 @@ export async function loginCustomer(formData: FormData) {
 
 export async function logoutCustomer() {
   await clearCustomerSession();
+}
+
+// --- Push notification subscriptions ---
+
+export async function savePushSubscription(
+  sub: { endpoint: string; keys: { p256dh: string; auth: string } },
+  audience: "admin" | "customer"
+) {
+  if (!sub?.endpoint?.startsWith("https://") || !sub.keys?.p256dh || !sub.keys?.auth) {
+    return { ok: false, message: "Invalid subscription." };
+  }
+  // Only a signed-in admin may register a device for the owner's order alerts.
+  if (audience === "admin" && !(await getAdminSession())) {
+    return { ok: false, message: "Not allowed." };
+  }
+  const data = { endpoint: sub.endpoint.slice(0, 1000), p256dh: sub.keys.p256dh, auth: sub.keys.auth, audience };
+  await prisma.pushSubscription.upsert({ where: { endpoint: data.endpoint }, update: data, create: data });
+  return { ok: true };
+}
+
+export async function removePushSubscription(endpoint: string) {
+  await prisma.pushSubscription.delete({ where: { endpoint } }).catch(() => {});
+  return { ok: true };
 }

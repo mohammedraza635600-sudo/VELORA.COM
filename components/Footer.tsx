@@ -1,5 +1,6 @@
 import Logo from "./Logo";
 import NewsletterForm from "./NewsletterForm";
+import NotifyButton from "./NotifyButton";
 
 type Col = { title: string; links: { label: string; url: string }[] };
 
@@ -17,7 +18,12 @@ export default function Footer({ columns }: { columns: Col[] }) {
               ))}
             </div>
           ))}
-          <NewsletterForm />
+          <div>
+            <NewsletterForm />
+            <div className="mt-4">
+              <NotifyButton audience="customer" labelOff="🔔 Get offer alerts" labelOn="🔔 Offer alerts on (tap to turn off)" className="text-xs tracking-wide border border-cream/40 px-3 py-2" />
+            </div>
+          </div>
         </div>
         <div className="flex justify-between pt-6 text-xs opacity-60 flex-wrap gap-3">
           <span>© {new Date().getFullYear()} VELORA</span>

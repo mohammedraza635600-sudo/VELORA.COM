@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartContext";
 import { WishlistProvider } from "@/components/WishlistContext";
 import SiteChrome from "@/components/SiteChrome";
+import PwaRegister from "@/components/PwaRegister";
 import RevealScript from "@/components/RevealScript";
 import Preloader from "@/components/Preloader";
 import GlobalMotion from "@/components/GlobalMotion";
@@ -14,12 +15,17 @@ import { getSetting, DEFAULT_BRANDING, DEFAULT_NAV, DEFAULT_FOOTER, DEFAULT_ANNO
 export const metadata: Metadata = {
   title: "VELORA — Menswear, Defined by Distinction",
   description: "Quiet luxury menswear. Tailoring, outerwear and knitwear made for permanence.",
+  manifest: "/manifest.webmanifest",
+  applicationName: "VELORA",
+  appleWebApp: { capable: true, title: "VELORA", statusBarStyle: "black-translucent" },
+  icons: { apple: "/icons/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  themeColor: "#26382A",
 };
 
 // Settings (nav, footer, announcement, colours) are edited live from the admin panel, so every
@@ -71,6 +77,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </CartProvider>
         <WhatsAppButton />
         <RevealScript />
+        <PwaRegister />
       </body>
     </html>
   );
