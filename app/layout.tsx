@@ -6,6 +6,7 @@ import { CartProvider } from "@/components/CartContext";
 import { WishlistProvider } from "@/components/WishlistContext";
 import SiteChrome from "@/components/SiteChrome";
 import PwaRegister from "@/components/PwaRegister";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import RevealScript from "@/components/RevealScript";
 import Preloader from "@/components/Preloader";
 import GlobalMotion from "@/components/GlobalMotion";
@@ -78,6 +79,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <WhatsAppButton />
         <RevealScript />
         <PwaRegister />
+        <GoogleAnalytics />
       </body>
     </html>
   );
