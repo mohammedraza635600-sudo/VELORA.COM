@@ -32,7 +32,7 @@ export default async function Home() {
         <HeroParallax>
           <div className="relative z-10 px-5 md:px-12 pb-24 text-cream max-w-3xl">
             <div className="hero-eyebrow text-[11px] tracking-widest mb-4">{hero.eyebrow}</div>
-            <h1 className="hero-title font-serif text-6xl md:text-8xl leading-[.98]">{hero.title}</h1>
+            <h1 className="hero-title font-serif text-5xl sm:text-6xl md:text-8xl leading-[.98]">{hero.title}</h1>
             <p className="hero-sub mt-6 max-w-md text-sm leading-relaxed">{hero.subtitle}</p>
             <div className="hero-cta flex gap-4 mt-9 flex-wrap">
               <Link href={hero.ctaUrl} className="btn btn-inverse transition-transform active:scale-95">{hero.ctaText} →</Link>
