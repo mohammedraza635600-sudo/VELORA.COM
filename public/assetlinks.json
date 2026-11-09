@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.velora_com.twa",
+        "sha256_cert_fingerprints": ["08:32:EC:B9:AE:9F:26:DF:84:23:10:44:7E:B3:10:33:BC:11:04:DB:CC:05:91:39:C4:47:BE:85:CC:EC:83:C6"]
+      }
+    }]
