@@ -23,7 +23,11 @@ export default function AccountForms() {
   return (
     <div className="max-w-sm mx-auto px-5 py-20">
       <div className="text-[11px] tracking-widest text-olive mb-2">MY ACCOUNT</div>
-      <h1 className="font-serif text-4xl mb-8">{mode === "login" ? "Sign in" : "Create account"}</h1>
+      <h1 className="font-serif text-4xl mb-6">{mode === "login" ? "Sign in" : "Create account"}</h1>
+      <div className="grid grid-cols-2 mb-6 border border-black/20 text-xs tracking-widest">
+        <button type="button" onClick={() => { setMode("login"); setError(""); }} className={`py-3 transition-colors ${mode === "login" ? "bg-olive text-cream" : "text-olive"}`}>SIGN IN</button>
+        <button type="button" onClick={() => { setMode("signup"); setError(""); }} className={`py-3 transition-colors ${mode === "signup" ? "bg-olive text-cream" : "text-olive"}`}>CREATE ACCOUNT</button>
+      </div>
       <form onSubmit={submit} className="grid gap-3">
         {mode === "signup" && (
           <input name="name" placeholder="Full name" required className="border border-black/20 p-3 text-sm bg-transparent" />
