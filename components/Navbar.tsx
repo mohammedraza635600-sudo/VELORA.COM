@@ -49,9 +49,15 @@ export default function Navbar({ items, announcement }: { items: NavItem[]; anno
               </Link>
             ))}
           </nav>
-          <div className="flex gap-6 text-xs tracking-widest items-center">
+          <div className="flex gap-4 md:gap-6 text-xs tracking-widest items-center">
             <Link href="/search" className="hidden md:inline hover:opacity-60 transition-opacity">SEARCH</Link>
             <Link href="/account" className="hidden md:inline hover:opacity-60 transition-opacity">ACCOUNT</Link>
+            <Link href="/account" aria-label="My account / Sign in" className="md:hidden active:scale-90 transition-transform">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+              </svg>
+            </Link>
             <Link href="/wishlist" aria-label="Wishlist" className="hover:opacity-60 transition-opacity">SAVED{wishCount > 0 ? ` (${wishCount})` : ""}</Link>
             <Link href="/cart" className="active:scale-90 transition-transform inline-block">BAG ({count})</Link>
           </div>
@@ -76,7 +82,7 @@ export default function Navbar({ items, announcement }: { items: NavItem[]; anno
             {n.label}
           </Link>
         ))}
-        <Link href="/account" onClick={() => setOpen(false)} className="text-cream/80 text-xs tracking-widest mt-4">ACCOUNT</Link>
+        <Link href="/account" onClick={() => setOpen(false)} className="text-cream/80 text-xs tracking-widest mt-4">SIGN IN / MY ACCOUNT</Link>
         <Link href="/track-order" onClick={() => setOpen(false)} className="text-cream/80 text-xs tracking-widest">TRACK ORDER</Link>
       </div>
     </>
