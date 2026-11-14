@@ -7,6 +7,8 @@ import { WishlistProvider } from "@/components/WishlistContext";
 import SiteChrome from "@/components/SiteChrome";
 import PwaRegister from "@/components/PwaRegister";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import WelcomePrompt from "@/components/WelcomePrompt";
+import { getCustomerSession } from "@/lib/customerAuth";
 import RevealScript from "@/components/RevealScript";
 import Preloader from "@/components/Preloader";
 import GlobalMotion from "@/components/GlobalMotion";
@@ -40,6 +42,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     getSetting("footer", DEFAULT_FOOTER),
     getSetting("announcement", DEFAULT_ANNOUNCEMENT),
   ]);
+
+  let loggedIn = false;
+  try { loggedIn = !!(await getCustomerSession()); } catch {}
 
   const cssVars = {
     "--olive": branding.primary,
@@ -77,6 +82,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </WishlistProvider>
         </CartProvider>
         <WhatsAppButton />
+        <WelcomePrompt loggedIn={loggedIn} />
         <RevealScript />
         <PwaRegister />
         <GoogleAnalytics />
