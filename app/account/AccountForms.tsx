@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { loginCustomer, signupCustomer } from "@/app/actions";
 
-export default function AccountForms() {
+export default function AccountForms({ initialMode = "login" }: { initialMode?: "login" | "signup" }) {
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [mode, setMode] = useState<"login" | "signup">(initialMode);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 

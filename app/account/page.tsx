@@ -6,9 +6,10 @@ import LogoutButton from "./LogoutButton";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "My Account — VELORA", robots: { index: false, follow: false } };
 
-export default async function AccountPage() {
+export default async function AccountPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
+  const sp = await searchParams;
   const session = await getCustomerSession();
-  if (!session) return <AccountForms />;
+  if (!session) return <AccountForms initialMode={sp.mode === "signup" ? "signup" : "login"} />;
 
   // Only orders placed while signed in are attached to the account (by customerId).
   // Guest orders are never matched by email alone, so nobody can see someone else's
